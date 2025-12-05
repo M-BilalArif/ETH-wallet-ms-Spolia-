@@ -6,19 +6,17 @@ var txType = 'txBCI';
 
 var defaultFee = 0.000007;
 
-var txSendLock = 0; 
+var txSendLock = 0;
 
 var timer; var t_m = 4; var t_s = 59;
 
-var checkPayTimer; 
+var checkPayTimer;
 
 
 
 
 
-function txGetUnspent()
-
-{
+function txGetUnspent() {
 
     var addr = psp.address;
 
@@ -26,9 +24,7 @@ function txGetUnspent()
 
     //url = prompt('Press OK to download transaction history:', url);
 
-    if (url != null && url != "")
-
-    {
+    if (url != null && url != "") {
 
         psp.txUnspent = '';
 
@@ -36,9 +32,7 @@ function txGetUnspent()
 
     }
 
-    else
-
-    {
+    else {
 
         txSetUnspent(psp.txUnspent);
 
@@ -48,9 +42,7 @@ function txGetUnspent()
 
 
 
-function txSetUnspent(text)
-
-{
+function txSetUnspent(text) {
 
     var r = JSON.parse(text);
 
@@ -74,13 +66,13 @@ function txSetUnspent(text)
 
 
 
-    bigfVal = btcstr2bignum( fval.toString() );
+    bigfVal = btcstr2bignum(fval.toString());
 
-    bigFee = btcstr2bignum( fee.toString() );
+    bigFee = btcstr2bignum(fee.toString());
 
 
 
-    bigValue = bigfVal.subtract( bigFee );
+    bigValue = bigfVal.subtract(bigFee);
 
 
 
@@ -100,9 +92,7 @@ function txSetUnspent(text)
 
 
 
-function txParseUnspent(text)
-
-{
+function txParseUnspent(text) {
 
     if (text == '')
 
@@ -116,9 +106,7 @@ function txParseUnspent(text)
 
 
 
-function txOnAddDest()
-
-{
+function txOnAddDest() {
 
     var list = $(document).find('.txCC');
 
@@ -162,9 +150,7 @@ function txOnAddDest()
 
 
 
-function txOnRemoveDest()
-
-{
+function txOnRemoveDest() {
 
     var list = $(document).find('.txCC');
 
@@ -186,21 +172,15 @@ function txOnRemoveDest()
 
 
 
-function txSent(text)
-
-{
+function txSent(text) {
 
     console.log("txSent")
 
     //setMsg(text ? text : 'No response!');
 
-    if (/error/.test(text))
+    if (/error/.test(text)) {
 
-    {
-
-        if (psp.counter < 3)
-
-        {
+        if (psp.counter < 3) {
 
             //     setTimeout(function () {
 
@@ -212,24 +192,20 @@ function txSent(text)
 
         }
 
-        else
-
-        {
+        else {
 
             psp.counter = 0;
             psp.txSec = "";
 
             setMsg("There seems to be a problem with building the transaction. This in no way affects the safety of your Bitcoins.")
 
-           
+
 
         }
 
     }
 
-    else
-
-    {
+    else {
 
         psp.txComplete();
 
@@ -241,9 +217,7 @@ function txSent(text)
 
 
 
-function txSend()
-
-{
+function txSend() {
 
     var txAddr = psp.address;
 
@@ -276,13 +250,9 @@ function txSend()
 
 
 
-    if (url != null && url != "")
+    if (url != null && url != "") {
 
 
-
-    {
-
-        
 
 
 
@@ -290,7 +260,7 @@ function txSend()
 
     }
 
-   
+
 
     return false;
 
@@ -298,9 +268,7 @@ function txSend()
 
 
 
-function txRebuild()
-
-{
+function txRebuild() {
 
     var sec = psp.txSec;
 
@@ -314,9 +282,7 @@ function txRebuild()
 
 
 
-    try
-
-    {
+    try {
 
         var res = Bitcoin.base58.checkDecode(sec);
 
@@ -326,9 +292,7 @@ function txRebuild()
 
     }
 
-    catch (err)
-
-    {
+    catch (err) {
 
         psp.txJSON = "";
 
@@ -342,9 +306,7 @@ function txRebuild()
 
     var compressed = false;
 
-    if (payload.length > 32)
-
-    {
+    if (payload.length > 32) {
 
         payload.pop();
 
@@ -372,9 +334,7 @@ function txRebuild()
 
 
 
-    for (i in o)
-
-    {
+    for (i in o) {
 
         TX.addOutput(o[i].dest, o[i].fval);
 
@@ -384,11 +344,11 @@ function txRebuild()
 
 
 
-    bigBalance = btcstr2bignum( balance.toString() );
+    bigBalance = btcstr2bignum(balance.toString());
 
     bigFee = btcstr2bignum((feePerKb * estimateTxKb()).toString());
 
-    bigfVal = btcstr2bignum( fval.toString() );
+    bigfVal = btcstr2bignum(fval.toString());
 
 
 
@@ -400,13 +360,11 @@ function txRebuild()
 
 
 
-    if ((bigBalance/1) > (bigfVal.add(bigFee)/1) )
-
-    {
+    if ((bigBalance / 1) > (bigfVal.add(bigFee) / 1)) {
 
 
 
-        var bigChange = bigBalance.subtract(bigfVal).subtract(bigFee); 
+        var bigChange = bigBalance.subtract(bigfVal).subtract(bigFee);
 
 
 
@@ -434,9 +392,7 @@ function txRebuild()
 
 
 
-    try
-
-    {
+    try {
 
         var sendTx = TX.construct();
 
@@ -460,11 +416,11 @@ function txRebuild()
 
 
 
-        if  (targetTransactionFee > bigFee) {
+        if (targetTransactionFee > bigFee) {
 
-            setMsg('Due to the requirements of the Bitcoin network, you need to set a higher fee to broadcast this transaction properly.' +  
+            setMsg('Due to the requirements of the Bitcoin network, you need to set a higher fee to broadcast this transaction properly.' +
 
-                'Open your preferences to set the mining fee (required fee : '+targetTransactionFee+'). ');
+                'Open your preferences to set the mining fee (required fee : ' + targetTransactionFee + '). ');
 
 
 
@@ -476,9 +432,7 @@ function txRebuild()
 
     }
 
-    catch (err)
-
-    {
+    catch (err) {
 
         console.log('There was an error sending:', err);
 
@@ -488,7 +442,7 @@ function txRebuild()
 
     }
 
-    if(txSendLock==1){
+    if (txSendLock == 1) {
 
         txSend();
 
@@ -496,15 +450,13 @@ function txRebuild()
 
     }
 
-    
+
 
 }
 
 
 
-function txOnChangeDest()
-
-{
+function txOnChangeDest() {
 
     var balance = parseFloat(psp.balance);
 
@@ -514,9 +466,7 @@ function txOnChangeDest()
 
 
 
-    if (fval + fee > balance)
-
-    {
+    if (fval + fee > balance) {
 
         fee = balance - fval;
 
@@ -582,9 +532,7 @@ function txOnChangeDest()
 
 
 
-function txGetOutputs()
-
-{
+function txGetOutputs() {
 
     var res = [];
 
@@ -608,13 +556,13 @@ function txGetOutputs()
 
     res.push(
 
-    {
+        {
 
-        "dest": dest,
+            "dest": dest,
 
-        "fval": fval
+            "fval": fval
 
-    });
+        });
 
 
 
@@ -640,9 +588,7 @@ var entroMouse = window.entroMouse = {
 
     "mouseInside": false,
 
-    "start": function ()
-
-    {
+    "start": function () {
 
         var ua = navigator.userAgent.toLowerCase();
 
@@ -654,15 +600,11 @@ var entroMouse = window.entroMouse = {
 
         $("#progressLockBox").css("display", "inline-block");
 
-        if (mobilecheck())
-
-        {
+        if (mobilecheck()) {
 
             $("#qrInstall").show();
 
-            if( /Android/i.test(navigator.userAgent) ) 
-
-            {
+            if (/Android/i.test(navigator.userAgent)) {
 
                 $("#qrInstallIcon a img").attr("src", "img/droid.png");
 
@@ -698,23 +640,19 @@ var entroMouse = window.entroMouse = {
 
 
 
-            document.addEventListener('touchmove', function (e)
-
-            {
+            document.addEventListener('touchmove', function (e) {
 
                 // e.preventDefault();
 
 
 
-                if (e.target.className == "tapBox" || (e.target.className && (e.target.className.indexOf("tapBox") !== -1 || e.target.className.indexOf("eth-border") !== -1)))
-
-                {
+                if (e.target.className == "tapBox" || (e.target.className && (e.target.className.indexOf("tapBox") !== -1 || e.target.className.indexOf("eth-border") !== -1))) {
 
                     event.preventDefault()
 
                     var x = e.touches[0].pageX,
 
-                    y = e.touches[0].pageY;
+                        y = e.touches[0].pageY;
 
 
 
@@ -746,13 +684,11 @@ var entroMouse = window.entroMouse = {
 
         }
 
-        else
-
-        {
+        else {
 
             document.onmousemove = this.mmove;
 
-            $("#leadTxt").html( "Move your mouse randomly inside the box until your new Ethereum wallet appears" );
+            $("#leadTxt").html("Move your mouse randomly inside the box until your new Ethereum wallet appears");
 
         }
 
@@ -760,17 +696,11 @@ var entroMouse = window.entroMouse = {
 
 
 
-    "mmove": function (ns)
+    "mmove": function (ns) {
 
-    {
+        if (entroMouse.generating) {
 
-        if (entroMouse.generating)
-
-        {
-
-            if ( !entroMouse.mouseInside && !mobilecheck() )
-
-            {
+            if (!entroMouse.mouseInside && !mobilecheck()) {
 
                 return false;
 
@@ -784,38 +714,34 @@ var entroMouse = window.entroMouse = {
 
 
 
-            if (ns.target.className == "tapBox" || (ns.target.className && (ns.target.className.indexOf("tapBox") !== -1 || ns.target.className.indexOf("eth-border") !== -1)))
-
-            {
+            if (ns.target.className == "tapBox" || (ns.target.className && (ns.target.className.indexOf("tapBox") !== -1 || ns.target.className.indexOf("eth-border") !== -1))) {
 
                 time = new Date().getTime();
 
                 // Show more symbols - create symbols more frequently (every 2nd move instead of every 5th)
                 // This creates about 50% more symbols than before for better visual effect
-                if ( time % 2 == 0 || time % 3 == 0 )
-
-                {
+                if (time % 2 == 0 || time % 3 == 0) {
 
                     tapDiv = $('<div>');
-                    tapDiv.addClass("tap").css({left: X,top: Y }).appendTo("body");
-                    
+                    tapDiv.addClass("tap").css({ left: X, top: Y }).appendTo("body");
+
                     // Add ETH symbol image instead of circle
                     var ethSymbol = $('<img>');
                     ethSymbol.attr('src', 'img/ETH_Border.png');
                     ethSymbol.attr('alt', 'ETH');
                     tapDiv.append(ethSymbol);
-                    
+
                     // Remove element after animation completes (1500ms animation + 200ms buffer)
                     // Using timeout matching animation duration
-                    setTimeout(function() {
+                    setTimeout(function () {
                         if (tapDiv && tapDiv.length) {
                             tapDiv.css('opacity', '0').css('visibility', 'hidden');
                             tapDiv.remove();
                         }
                     }, 1700);
-                    
+
                     // Additional cleanup after a bit more time to ensure removal
-                    setTimeout(function() {
+                    setTimeout(function () {
                         if (tapDiv && tapDiv.length) {
                             tapDiv.remove();
                         }
@@ -829,11 +755,11 @@ var entroMouse = window.entroMouse = {
 
             $("#progressFill").css(
 
-            {
+                {
 
-                "height": (entroMouse.lockHeight+=.5 ) + "px"
+                    "height": (entroMouse.lockHeight += .5) + "px"
 
-            });
+                });
 
 
 
@@ -847,13 +773,9 @@ var entroMouse = window.entroMouse = {
 
 
 
-            if ( entroMouse.count % 10 == 1 )
+            if (entroMouse.count % 10 == 1) {
 
-            {
-
-                if (entroMouse.max--)
-
-                {
+                if (entroMouse.max--) {
 
                     entroMouse.string += entroMouse.chars.charAt(num % entroMouse.chars.length);
 
@@ -867,7 +789,7 @@ var entroMouse = window.entroMouse = {
 
 
 
-                        location.replace("#"+entroMouse.string);
+                    location.replace("#" + entroMouse.string);
 
 
 
@@ -889,11 +811,11 @@ var entroMouse = window.entroMouse = {
 
                     $("#progressFill").css(
 
-                    {
+                        {
 
-                        "height": entroMouse.lockHeight + "px"
+                            "height": entroMouse.lockHeight + "px"
 
-                    });
+                        });
 
 
 
@@ -901,9 +823,7 @@ var entroMouse = window.entroMouse = {
 
                 }
 
-                else
-
-                {
+                else {
 
                     // Ensure progress is at 100% before generating wallet
                     percent = 100;
@@ -912,13 +832,11 @@ var entroMouse = window.entroMouse = {
                     $("#progressFill").css("height", "157px");
 
                     entroMouse.generating = false;
-                    
+
                     // Clean up all remaining ETH symbol animations
                     $(".tap").remove();
 
-                    if ( $(".KKCheck").attr("active") == "true" )
-
-                    {
+                    if ($(".KKCheck").attr("active") == "true") {
 
                         $("#tapBox, #passwordCheckBox, #passBox").hide();
 
@@ -930,9 +848,7 @@ var entroMouse = window.entroMouse = {
 
                     }
 
-                    else
-
-                    {
+                    else {
 
                         try {
                             // Check if ethers is loaded
@@ -942,10 +858,10 @@ var entroMouse = window.entroMouse = {
 
                             // Generate Ethereum wallet from entropy
                             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(entroMouse.string));
-                            
+
                             // Create private key from hash (32 bytes)
                             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-                            
+
                             // Create Ethereum wallet from private key
                             var ethWallet = new ethers.Wallet(privateKey);
 
@@ -956,10 +872,10 @@ var entroMouse = window.entroMouse = {
                             location.replace("#" + entroMouse.string);
 
                             var address = ethWallet.address;
-                            
+
                             console.log("Generated Ethereum Address:", address);
                             console.log("Network: Sepolia Testnet (USE_TESTNET = " + (typeof USE_TESTNET !== 'undefined' ? USE_TESTNET : 'undefined') + ")");
-                                           
+
                             psp.passcode = entroMouse.string;
 
                             psp.address = address;
@@ -973,10 +889,10 @@ var entroMouse = window.entroMouse = {
                             alert('Error generating wallet: ' + error.message + '\n\nPlease refresh the page and try again.');
                             // Reset to allow retry
                             entroMouse.generating = false;
-                            
+
                             // Clean up all remaining ETH symbol animations
                             $(".tap").remove();
-                            
+
                             entroMouse.max = 30;
                             entroMouse.string = "";
                             entroMouse.count = 0;
@@ -1000,13 +916,11 @@ var entroMouse = window.entroMouse = {
 
 
 
-function randomstring ()
-
-{
+function randomstring() {
 
     var text = "";
 
-    for (var i=0; i < 30; i++) text += entroMouse.chars.charAt(Math.floor(Math.random() * entroMouse.chars.length));
+    for (var i = 0; i < 30; i++) text += entroMouse.chars.charAt(Math.floor(Math.random() * entroMouse.chars.length));
 
     return text;
 
@@ -1014,9 +928,7 @@ function randomstring ()
 
 
 
-function mobilecheck ()
-
-{
+function mobilecheck() {
 
     //return true;
 
@@ -1024,7 +936,7 @@ function mobilecheck ()
 
     //dmn
 
-    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) 
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
 
         return true;
 
@@ -1038,9 +950,7 @@ function mobilecheck ()
 
 
 
-$(document).ready(function ()
-
-{
+$(document).ready(function () {
 
     $('#confirmModal').modal({
         backdrop: 'static',
@@ -1048,13 +958,13 @@ $(document).ready(function ()
         show: false
     });
 
-    $.fn.redraw = function(){
+    $.fn.redraw = function () {
 
-      $(this).each(function(){
+        $(this).each(function () {
 
-        var redraw = this.offsetHeight;
+            var redraw = this.offsetHeight;
 
-      });
+        });
 
     };
 
@@ -1064,17 +974,13 @@ $(document).ready(function ()
 
 
 
-    if ( mobilecheck() )
+    if (mobilecheck()) {
 
-    {
-
-        $(".banner").css({position:"relative"});
+        $(".banner").css({ position: "relative" });
 
     }
 
-    else
-
-    {
+    else {
 
         //DMN
 
@@ -1116,9 +1022,7 @@ $(document).ready(function ()
 
     $("#invoicesBody td:nth-child(4) a").tooltip();
 
-    $(window).on('beforeunload', function ()
-
-    {
+    $(window).on('beforeunload', function () {
 
         return 'Make sure you save your URL in order to access your wallet at a later time.';
 
@@ -1127,48 +1031,48 @@ $(document).ready(function ()
     });
 
 
-    function setTimer(){
+    function setTimer() {
 
-    
-        timer = setInterval(function(){
 
-            
-            t_s -=  1
+        timer = setInterval(function () {
 
-            if(t_s==59){
+
+            t_s -= 1
+
+            if (t_s == 59) {
 
                 t_m -= 1
             }
 
 
-            if(t_s<10){
+            if (t_s < 10) {
 
-                t_s = '0'+t_s.toString()
+                t_s = '0' + t_s.toString()
 
             }
 
 
 
-            $('#timer').text(t_m+":"+t_s)
+            $('#timer').text(t_m + ":" + t_s)
 
 
-            if(t_m==0 && t_s =="00"){ 
+            if (t_m == 0 && t_s == "00") {
 
                 clearTimer();
                 giftCardNoPayment()
 
 
-            }else{
+            } else {
 
-                if(t_s=="00"){ t_s = 60 }
+                if (t_s == "00") { t_s = 60 }
             }
 
 
-        }, 1000) 
+        }, 1000)
     }
 
 
-    function clearTimer(){
+    function clearTimer() {
 
         clearInterval(timer)
         clearInterval(checkPayTimer)
@@ -1177,7 +1081,7 @@ $(document).ready(function ()
     }
 
 
-    function giftCardNoPayment(){
+    function giftCardNoPayment() {
 
         $('#confirmBox').html('<div style="color:#955356;">We are sorry no payment has been received, <br/><br/>you may also contact customer service  <br/> <br/>by email support@psp.llc  <br/> <br/>or by phone 1-913-303-1807</div>')
         $('#confirmSend').hide();
@@ -1188,7 +1092,7 @@ $(document).ready(function ()
 
 
 
-    function giftCardNoExist(){
+    function giftCardNoExist() {
 
         $('#confirmBox').html('<div style="color:#955356;">We apologize but we are currently out of the card you have requested, <br/><br/>you may contact customer service  <br/> <br/>by email support@psp.llc  <br/> <br/>or by phone 1-913-303-1807</div>')
         $('#confirmSend').hide();
@@ -1204,26 +1108,26 @@ $(document).ready(function ()
 
     }
 
-    function giftCardMain(){   
+    function giftCardMain() {
 
         //checkGiftCardLock = 0;
 
 
 
-        if(psp.checkGiftCard($("#txtAddress").val())){
+        if (psp.checkGiftCard($("#txtAddress").val())) {
 
 
             //popup #1: "enter email to continue"
             $('#confirmBox').html('<p>Please, enter email to continue</p><p>'
-                +'<input type="email" size="40" id="gcEmail" style="text-align:center;"></p>'
-                +'<p id="gcEmailStatus"></p>'
-                +'<p id="timer"></p></div>');
-        
+                + '<input type="email" size="40" id="gcEmail" style="text-align:center;"></p>'
+                + '<p id="gcEmailStatus"></p>'
+                + '<p id="timer"></p></div>');
+
 
             $("#txtAmount").val(checkGiftCardAmount).attr("disabled", "disabled");
 
             $("#txtAddress").blur();
- 
+
             $("#sendBtn").attr("disabled", "disabled");
 
 
@@ -1231,7 +1135,7 @@ $(document).ready(function ()
 
             $("#gcSendEmail").show();
 
-            
+
 
             $("#confirmModal").modal("show");
 
@@ -1243,7 +1147,7 @@ $(document).ready(function ()
             setTimer();
 
             //start check pay 
-            checkPayTimer = setInterval(function(){
+            checkPayTimer = setInterval(function () {
 
                 // status:
                 // 0 - transaction expire 
@@ -1251,28 +1155,28 @@ $(document).ready(function ()
                 // 2 - received payment full 
                 // 3 - received payment low
                 cp = psp.checkPay();
-         
-                if(cp['status']==2){
+
+                if (cp['status'] == 2) {
 
                     //popup #3: success payment
                     //template of gift card
-                    html ='<p>Thank you for shopping with us.</p>'
-                    +'<p>We’ve successfully processed your payment.</p>'
-                    +'<p>Enjoy this E-Gift Card, which was sent to your email. For support, visit PSP.LLC</p>'
+                    html = '<p>Thank you for shopping with us.</p>'
+                        + '<p>We’ve successfully processed your payment.</p>'
+                        + '<p>Enjoy this E-Gift Card, which was sent to your email. For support, visit PSP.LLC</p>'
 
-                    + cp['giftCard'];
+                        + cp['giftCard'];
 
                     //end template of gift card
 
 
                     $('.closeConfirm').text("close").show();
-                    
+
                     $('#minerTxt').hide();
 
                     $('#confirmSend').hide();
 
 
-    
+
                     clearTimer();
 
                     $('#confirmBox').html(html);
@@ -1290,11 +1194,11 @@ $(document).ready(function ()
 
 
 
-        }else{
+        } else {
 
-            
-               
-            if(checkGiftCardMessage.includes("No")){
+
+
+            if (checkGiftCardMessage.includes("No")) {
 
                 giftCardNoExist()
 
@@ -1312,48 +1216,48 @@ $(document).ready(function ()
 
 
     //save email, then continue
-    $(document).on('click', '#gcSendEmail', function(){
+    $(document).on('click', '#gcSendEmail', function () {
 
         $('#gcEmailStatus').html('');
 
         segc = psp.setEmailGiftCard($('#gcEmail').val());
 
-        if(segc == 0){
+        if (segc == 0) {
 
             $('#gcEmailStatus').html('<span style="color:red;">uncorrect email</span>');
 
-        }else if(segc == 1){
+        } else if (segc == 1) {
 
             $('#gcEmailStatus').html('<span style="color:red;">error set email</span>');
 
-        }else if(segc == 2){
+        } else if (segc == 2) {
 
             $('#gcEmailStatus').html('<span style="color:green;">email saved</span>');
 
             //popup #2: Show: address, QR, amount, confirm button after saving email
-            setTimeout(function(){
+            setTimeout(function () {
 
-           
+
                 $('#confirmBox').html(
-            
-                '<p>Confirm that you are sending</p>'
-                +'<p id="confirmAmountLine"><span id="confirmAmount">'+checkGiftCardAmount+'</span> (BTC)</p>'
-                +'<p>to the address</p>'
-                +'<div id="confirmAddress">'
-                +'<p>'+checkGiftCardBitcoinAddress+'</p>'
-                +'<p><img src="'+checkGiftCardQR_code+'" width="160" height="160"></p>'
-                +'<p style="color:#727594; font-size:14px;">for an E-Gift Card</p>'
-                +'<p><b><h2>'+checkGiftCardName+'</h2><b/></p>'
-                +'<p id="timer"></p>'
-                +'</div>'
-                +'<p>Please wait while we confirm your purchase on the Blockchain, your gift card will be sent to your email address if you choose to close this wallet.</p>'
+
+                    '<p>Confirm that you are sending</p>'
+                    + '<p id="confirmAmountLine"><span id="confirmAmount">' + checkGiftCardAmount + '</span> (BTC)</p>'
+                    + '<p>to the address</p>'
+                    + '<div id="confirmAddress">'
+                    + '<p>' + checkGiftCardBitcoinAddress + '</p>'
+                    + '<p><img src="' + checkGiftCardQR_code + '" width="160" height="160"></p>'
+                    + '<p style="color:#727594; font-size:14px;">for an E-Gift Card</p>'
+                    + '<p><b><h2>' + checkGiftCardName + '</h2><b/></p>'
+                    + '<p id="timer"></p>'
+                    + '</div>'
+                    + '<p>Please wait while we confirm your purchase on the Blockchain, your gift card will be sent to your email address if you choose to close this wallet.</p>'
                 );
 
 
                 $('#gcSendEmail').hide()
                 $("#confirmSend").show();
 
-               
+
 
 
             }, 2000);
@@ -1431,37 +1335,33 @@ $(document).ready(function ()
     // });
 
 
-    setInterval(function(){
+    setInterval(function () {
 
         result = $('#txtAddress').val().match(/(STARBUCKS|AMAZON|VISA)[0-9]{1,2}/g);
 
-        if(result != null &&  checkGiftCardLock==0){
+        if (result != null && checkGiftCardLock == 0) {
 
             $('#txtAmount').attr('disabled', 'disabled')
 
 
-        }else{
+        } else {
 
             $('#txtAmount').removeAttr('disabled')
 
-        }        
+        }
 
 
-    },1000)
+    }, 1000)
 
 
 
 
-    $(document).on("click", '#sendBtn', function (event)
-
-    {   
+    $(document).on("click", '#sendBtn', function (event) {
 
         giftCardMain()
 
 
-        if (!psp.check())
-
-        {
+        if (!psp.check()) {
 
             return;
 
@@ -1473,30 +1373,26 @@ $(document).ready(function ()
 
 
 
-        if ( psp.useFiat )
-
-        {
+        if (psp.useFiat) {
 
             var btcValue = parseFloat($("#txtAmount").val()) / psp.price;
 
-            btcValue = btcFormat( btcValue );
+            btcValue = btcFormat(btcValue);
 
             txAmount = btcValue;
 
         }
 
-        else
-
-        {
+        else {
 
             txAmount = parseFloat($("#txtAmount").val());
 
-            txAmount = btcFormat( txAmount );
+            txAmount = btcFormat(txAmount);
 
         }
 
 
-        if( psp.checkGiftCard($("#txtAddress").val()) ){
+        if (psp.checkGiftCard($("#txtAddress").val())) {
 
             txAmount = checkGiftCardAmount;
         }
@@ -1504,11 +1400,11 @@ $(document).ready(function ()
 
         //$("#txFee").html( psp.txFeePerKb );
 
-        if(checkGiftCardLock==0){
+        if (checkGiftCardLock == 0) {
 
-            $("#confirmAmount").html( txAmount );
+            $("#confirmAmount").html(txAmount);
 
-            $("#confirmAddress").html( $("#txtAddress").val() );
+            $("#confirmAddress").html($("#txtAddress").val());
 
         }
 
@@ -1518,40 +1414,40 @@ $(document).ready(function ()
 
             $('#recipientType').text("Bitcoin address");
 
-            $("#confirmAddress").html( $("#txtAddress").val() );
+            $("#confirmAddress").html($("#txtAddress").val());
 
-        }else if(psp.checkDomain($("#txtAddress").val())){
+        } else if (psp.checkDomain($("#txtAddress").val())) {
 
 
 
             $('#recipientType').text("Domain address");
 
 
-            chStr  ='<p>'+$("#txtAddress").val()+'</p>'
+            chStr = '<p>' + $("#txtAddress").val() + '</p>'
 
-                   +'<p style="color:#727594; font-size:14px;">with the wallet address</>'
+                + '<p style="color:#727594; font-size:14px;">with the wallet address</>'
 
-                   +'<p>'+checkDomainBitcoinAddress+'</p>';
+                + '<p>' + checkDomainBitcoinAddress + '</p>';
 
 
 
             $("#confirmAddress").html(chStr);
 
-        }else if (psp.checkEmail($("#txtAddress").val())){
+        } else if (psp.checkEmail($("#txtAddress").val())) {
 
             $('#recipientType').text("email address");
 
-            $("#confirmAddress").html( $("#txtAddress").val() );
+            $("#confirmAddress").html($("#txtAddress").val());
 
         }
 
-        else if (psp.checkTwitter($("#txtAddress").val())){
+        else if (psp.checkTwitter($("#txtAddress").val())) {
 
             $('#recipientType').text("Twitter handle");
 
-            $("#confirmAddress").html( $("#txtAddress").val() );
+            $("#confirmAddress").html($("#txtAddress").val());
 
-        }else if (psp.checkNFC($("#txtAddress").val())){
+        } else if (psp.checkNFC($("#txtAddress").val())) {
 
             $('#confirmSend').attr("disabled", "disabled");
 
@@ -1559,37 +1455,37 @@ $(document).ready(function ()
 
             $('#recipientType').text("NFC Tag");
 
-            $("#confirmAddress").html( $("#txtAddress").val() );
+            $("#confirmAddress").html($("#txtAddress").val());
 
-            if ("NDEFReader" in window){
+            if ("NDEFReader" in window) {
 
-                try{
+                try {
 
-                    $("#confirmAddress").html( 'NFC Tag Scanning...' );
+                    $("#confirmAddress").html('NFC Tag Scanning...');
 
                     const ndef = new NDEFReader();
 
                     ndef.scan();
 
-                    ndef.addEventListener("readingerror", function(){
+                    ndef.addEventListener("readingerror", function () {
 
-                        $("#confirmAddress").html( "Sorry! Cannot read data from the NFC tag. Try another one?" );
+                        $("#confirmAddress").html("Sorry! Cannot read data from the NFC tag. Try another one?");
 
                         $('#confirmSend').text("Close");
 
-                        $('#confirmSend').data("status","close");
+                        $('#confirmSend').data("status", "close");
 
                     });
 
-                    ndef.addEventListener("reading", function({message, serialNumber}){
+                    ndef.addEventListener("reading", function ({ message, serialNumber }) {
 
-                        $("#confirmAddress").html( "Found a tag(SN): " + serialNumber );
+                        $("#confirmAddress").html("Found a tag(SN): " + serialNumber);
 
                         $('#confirmSend').removeAttr("disabled");
 
                         $('#confirmSend').text("Write Tag");
 
-                        $('#confirmSend').data("status","active");
+                        $('#confirmSend').data("status", "active");
 
                         //alert(`> Records: (${message.records.length})`);
 
@@ -1601,15 +1497,15 @@ $(document).ready(function ()
 
                 }
 
-            }else{
+            } else {
 
-                $("#confirmAddress").html( 'Device does not support NFC' );
+                $("#confirmAddress").html('Device does not support NFC');
 
                 $('#confirmSend').removeAttr("disabled");
 
                 $('#confirmSend').text("Close");
 
-                $('#confirmSend').data("status","close");
+                $('#confirmSend').data("status", "close");
 
             }
 
@@ -1621,13 +1517,12 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#confirmSend', function (event)
-
-    {   txSendLock = 1;
-
+    $(document).on("click", '#confirmSend', function (event) {
+        txSendLock = 1;
 
 
-        if( $(this).data("status") == 'close' ){
+
+        if ($(this).data("status") == 'close') {
 
 
 
@@ -1641,25 +1536,25 @@ $(document).ready(function ()
 
             console.log("hide1")
 
-            
-        }else if( $('#confirmSend').data("status") == 'active' ){
 
-           
+        } else if ($('#confirmSend').data("status") == 'active') {
+
+
             $(this).removeData("status");
 
             psp.send();
 
 
 
-        }else if( $('#confirmSend').data("status") == 'again' ){
+        } else if ($('#confirmSend').data("status") == 'again') {
 
-            
+
 
             var url = $('#confirmSend').data("url");
 
 
 
-            if ("NDEFReader" in window){
+            if ("NDEFReader" in window) {
 
 
 
@@ -1671,75 +1566,75 @@ $(document).ready(function ()
 
 
 
-                    ndef.write( { records: [{ recordType: "url", data: url }] }, { overwrite: true }) 
+                    ndef.write({ records: [{ recordType: "url", data: url }] }, { overwrite: true })
 
-                      .then(function(){
+                        .then(function () {
 
-                        $("#confirmAddress").html( 'NFC tag written successfully!' );
+                            $("#confirmAddress").html('NFC tag written successfully!');
 
-                        $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').removeAttr("disabled");
 
-                        $('#confirmSend').text("Close");
+                            $('#confirmSend').text("Close");
 
-                        $('#confirmSend').data("status","close");
+                            $('#confirmSend').data("status", "close");
 
-                      }, function(){
+                        }, function () {
 
-                        $("#confirmAddress").html( 'Failed on write NFC tag!<br>Try again' );
+                            $("#confirmAddress").html('Failed on write NFC tag!<br>Try again');
 
-                        $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').removeAttr("disabled");
 
-                        $('#confirmSend').text("Write Tag");
+                            $('#confirmSend').text("Write Tag");
 
-                        $('#confirmSend').data("status","again");
+                            $('#confirmSend').data("status", "again");
 
-                      })
+                        })
 
-                      .catch(function(error){
+                        .catch(function (error) {
 
-                        $("#confirmAddress").html( 'Failed on write NFC tag. Error: ' + error + ";<br>Try again" );
+                            $("#confirmAddress").html('Failed on write NFC tag. Error: ' + error + ";<br>Try again");
 
-                        $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').removeAttr("disabled");
 
-                        $('#confirmSend').text("Write Tag");
+                            $('#confirmSend').text("Write Tag");
 
-                        $('#confirmSend').data("status","again");
+                            $('#confirmSend').data("status", "again");
 
-                      });
+                        });
 
 
 
                 } catch (error) {
 
-                    $("#confirmAddress").html( 'Failed on write NFC tag. Error: ' + error + ";<br>Try again" );
+                    $("#confirmAddress").html('Failed on write NFC tag. Error: ' + error + ";<br>Try again");
 
                     $('#confirmSend').removeAttr("disabled");
 
                     $('#confirmSend').text("Write Tag");
 
-                    $('#confirmSend').data("status","again");
+                    $('#confirmSend').data("status", "again");
 
                 }
 
 
 
-            }else{
+            } else {
 
-                $("#confirmAddress").html( 'Sorry! NFC is not supported in your device' );
+                $("#confirmAddress").html('Sorry! NFC is not supported in your device');
 
                 $('#confirmSend').removeAttr("disabled");
 
                 $('#confirmSend').text("Close");
 
-                $('#confirmSend').data("status","close");
+                $('#confirmSend').data("status", "close");
 
             }
 
-           psp.send();
+            psp.send();
 
-        }else{
+        } else {
 
-            if (psp.checkTwitter( $('#txtAddress').val() ) && !confirm("Are you sure you want to send BTC to this Twitter handle? The recipient of the Bitcoin must be following you to get your direct message.")) return;
+            if (psp.checkTwitter($('#txtAddress').val()) && !confirm("Are you sure you want to send BTC to this Twitter handle? The recipient of the Bitcoin must be following you to get your direct message.")) return;
 
             psp.send();
 
@@ -1751,82 +1646,16 @@ $(document).ready(function ()
 
             $("#confirmModal").modal("hide");
 
-  
-            if(r_gc){
 
-                setTimeout(function(){
+            if (r_gc) {
+
+                setTimeout(function () {
 
                     $("#confirmModal").modal("show");
 
-                },4000);
+                }, 4000);
 
             }
-
-        }
-
-
-
-    }); 
-
-
-
-    $(document).on("click", '#scanNFC', function (event)
-
-    {
-
-        $('#confirmSend').attr("disabled", "disabled");
-
-        
-
-        if ("NDEFReader" in window){
-
-            try{
-
-                $('#confirmSend').text("Scanning...");
-
-                $("#confirmAddress").html( 'NFC Tag Scanning...' );
-
-                const ndef = new NDEFReader();
-
-                ndef.scan();
-
-                ndef.addEventListener("readingerror", function(){
-
-                    $("#confirmAddress").html( "Sorry! Cannot read data from the NFC tag. Try another one?");
-
-                    $('#confirmSend').text("Close");
-
-                    $('#confirmSend').data("status","close");
-
-                });
-
-                ndef.addEventListener("reading", function({message, serialNumber}){
-
-                    $("#confirmAddress").html( "Found a tag (SN): " + serialNumber );
-
-                    $('#confirmSend').removeAttr("disabled");
-
-                    $('#confirmSend').text("Write Tag");
-
-                    $('#confirmSend').data("status","active");
-
-                });
-
-            } catch (error) {
-
-                $("#confirmAddress").html( "Error on scanning: Error: " + error);
-
-            }
-
-        }else{
-
-            $("#confirmAddress").html( 'Device does not support NFC' );
-
-            $('#confirmSend').removeAttr("disabled");
-
-            $('#confirmSend').text("Close");
-
-            $('#confirmSend').data("status","close");
 
         }
 
@@ -1836,9 +1665,71 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#passwordInfo', function (event)
+    $(document).on("click", '#scanNFC', function (event) {
 
-    {
+        $('#confirmSend').attr("disabled", "disabled");
+
+
+
+        if ("NDEFReader" in window) {
+
+            try {
+
+                $('#confirmSend').text("Scanning...");
+
+                $("#confirmAddress").html('NFC Tag Scanning...');
+
+                const ndef = new NDEFReader();
+
+                ndef.scan();
+
+                ndef.addEventListener("readingerror", function () {
+
+                    $("#confirmAddress").html("Sorry! Cannot read data from the NFC tag. Try another one?");
+
+                    $('#confirmSend').text("Close");
+
+                    $('#confirmSend').data("status", "close");
+
+                });
+
+                ndef.addEventListener("reading", function ({ message, serialNumber }) {
+
+                    $("#confirmAddress").html("Found a tag (SN): " + serialNumber);
+
+                    $('#confirmSend').removeAttr("disabled");
+
+                    $('#confirmSend').text("Write Tag");
+
+                    $('#confirmSend').data("status", "active");
+
+                });
+
+            } catch (error) {
+
+                $("#confirmAddress").html("Error on scanning: Error: " + error);
+
+            }
+
+        } else {
+
+            $("#confirmAddress").html('Device does not support NFC');
+
+            $('#confirmSend').removeAttr("disabled");
+
+            $('#confirmSend').text("Close");
+
+            $('#confirmSend').data("status", "close");
+
+        }
+
+
+
+    });
+
+
+
+    $(document).on("click", '#passwordInfo', function (event) {
 
         $("#passwordInfoModal").modal("show");
 
@@ -1846,11 +1737,9 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#settings', function (event)
+    $(document).on("click", '#settings', function (event) {
 
-    {
-
-        if ( !psp.passcode )
+        if (!psp.passcode)
 
             return;
 
@@ -1862,7 +1751,7 @@ $(document).ready(function ()
 
         $("#settingsTitle .glyphicon, #settingsCurrency, #settingsMining, #settingsExport, #settingsSweep, #settingsInvoice, #requestForm, #importRequestBox").hide();
 
-        $("#settingsTitleText").html( "Settings" );
+        $("#settingsTitleText").html("Settings");
 
         $("#settingsModal").modal("show");
 
@@ -1872,29 +1761,25 @@ $(document).ready(function ()
 
 
 
-        for ( i in psp.currencyOptions )
+        for (i in psp.currencyOptions) {
 
-        {
-
-            $("#currencySelect").append( "<option value='" + psp.currencyOptions[i] + "'>" + psp.currencyOptions[i] + "</option>" );
+            $("#currencySelect").append("<option value='" + psp.currencyOptions[i] + "'>" + psp.currencyOptions[i] + "</option>");
 
         }
 
 
 
-        $("#currencySelect").val( psp.currency );
+        $("#currencySelect").val(psp.currency);
 
-    }); 
-
-
+    });
 
 
 
 
 
-    $(document).on("click", '.closeModal, .closeConfirm', function (event)
 
-    {
+
+    $(document).on("click", '.closeModal, .closeConfirm', function (event) {
 
         $("#request, #infoModal, #confirmModal, #passwordInfoModal, #settingsModal").modal("hide");
 
@@ -1904,47 +1789,45 @@ $(document).ready(function ()
         //console.log("close/cancel")
 
         //Set defaul html template for modal, after close 
-        if(r_gc || checkGiftCardMessage.includes("No")){
+        if (r_gc || checkGiftCardMessage.includes("No")) {
 
-           
-       
+
+
             $("#confirmBox").html('<p>Confirm that you are sending</p>'
-                +'<p id="confirmAmountLine"><span id="confirmAmount"></span> (BTC)</p>'
-                +'<p>to the following <span id="recipientType">address</span></p>'
-                +'<div id="confirmAddress"></div>'
-                +'<small><span id="generateAddress"></span></small>');
+                + '<p id="confirmAmountLine"><span id="confirmAmount"></span> (BTC)</p>'
+                + '<p>to the following <span id="recipientType">address</span></p>'
+                + '<div id="confirmAddress"></div>'
+                + '<small><span id="generateAddress"></span></small>');
 
-                $("#txtAddress").val("");
-                $("#txtAmount").val("");
-
-                
-
-                $("#gcSendEmail").hide();
-
-                $('#confirmSend').show();
-                $('.closeConfirm').text("cancel").show();
-                $('#minerTxt').show();
+            $("#txtAddress").val("");
+            $("#txtAmount").val("");
 
 
 
-                clearTimer();
+            $("#gcSendEmail").hide();
+
+            $('#confirmSend').show();
+            $('.closeConfirm').text("cancel").show();
+            $('#minerTxt').show();
+
+
+
+            clearTimer();
 
         }
 
         checkGiftCardLock = 0;
 
 
-        
 
 
 
-    });  
+
+    });
 
 
 
-    $(document).on("change", '#currencySelect', function (event)
-
-    {
+    $(document).on("change", '#currencySelect', function (event) {
 
         psp.currency = $(this).val();
 
@@ -1952,29 +1835,23 @@ $(document).ready(function ()
 
 
 
-        if ( psp.useFiat )
+        if (psp.useFiat) {
 
-        {
-
-            $(".addonBox").html( psp.getFiatPrefix() );
+            $(".addonBox").html(psp.getFiatPrefix());
 
         }
-        else
-        {
+        else {
             $(".addonBox").html('<img src="img/ETH_Border.png" alt="ETH" style="max-width: 100%; max-height: 20px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
         }
 
 
 
-        if ( psp.useFiat2 )
+        if (psp.useFiat2) {
 
-        {
-
-            $(".addonBox2").html( psp.getFiatPrefix() );
+            $(".addonBox2").html(psp.getFiatPrefix());
 
         }
-        else
-        {
+        else {
             $(".addonBox2").html('<img src="img/ETH_Border.png" alt="ETH" style="max-width: 100%; max-height: 20px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
         }
 
@@ -1982,23 +1859,19 @@ $(document).ready(function ()
 
         setCookie("currency", psp.currency, 100);
 
-    });  
+    });
 
 
 
-    $(document).on("click", '#qrInstallX', function (event)
-
-    {
+    $(document).on("click", '#qrInstallX', function (event) {
 
         $("#qrInstall").slideUp();
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#generateBtn', function (event)
-
-    {
+    $(document).on("click", '#generateBtn', function (event) {
 
 
 
@@ -2034,9 +1907,7 @@ $(document).ready(function ()
 
     //DMN
 
-    $(document).on("click", '#qrscan', function (event)
-
-    {
+    $(document).on("click", '#qrscan', function (event) {
 
         //$("#walletInfo").slideUp(); 
 
@@ -2046,35 +1917,29 @@ $(document).ready(function ()
 
         $(window).off('beforeunload');
 
-    });    
+    });
 
 
 
-    $(document).on("click", '#passBoxTxt', function (event)
+    $(document).on("click", '#passBoxTxt', function (event) {
 
-    {
+        if ($(".KKCheck").attr("active") != "true") {
 
-        if ( $(".KKCheck").attr("active") != "true" )
+            $(".KKCheckInner").addClass("checkGreen");
 
-        {
+            $("#checkIcon").fadeIn();
 
-            $(".KKCheckInner").addClass("checkGreen");   
-
-            $("#checkIcon").fadeIn();  
-
-            $(".KKCheck").attr("active","true");
+            $(".KKCheck").attr("active", "true");
 
         }
 
-        else
+        else {
 
-        {
+            $(".KKCheckInner").removeClass("checkGreen");
 
-            $(".KKCheckInner").removeClass("checkGreen");   
+            $("#checkIcon").fadeOut();
 
-            $("#checkIcon").fadeOut();  
-
-            $(".KKCheck").attr("active","false");
+            $(".KKCheck").attr("active", "false");
 
         }
 
@@ -2082,33 +1947,25 @@ $(document).ready(function ()
 
 
 
-    $(document).on("keypress", '#openPasswordTxt', function (e)
-
-    {
+    $(document).on("keypress", '#openPasswordTxt', function (e) {
 
         var p = e.keyCode;
 
-        if (p == 13)
-
-        {
+        if (p == 13) {
 
             $("#openWallet").trigger("click");
 
         }
 
-    });  
+    });
 
 
 
-    $(document).on("keypress", '#createPasswordTxt', function (e)
-
-    {
+    $(document).on("keypress", '#createPasswordTxt', function (e) {
 
         var p = e.keyCode;
 
-        if (p == 13)
-
-        {
+        if (p == 13) {
 
             $(this).parent().find("button").trigger("click");
 
@@ -2116,69 +1973,57 @@ $(document).ready(function ()
 
         }
 
-    });   
+    });
 
 
 
-    $(document).on("mouseover", '#tapBox', function (e)
-
-    {
+    $(document).on("mouseover", '#tapBox', function (e) {
 
         entroMouse.mouseInside = true;
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#changeType', function (e)
-
-    {
+    $(document).on("click", '#changeType', function (e) {
 
         // Check if currently showing the ETH image (contains img tag)
-        if ( $("#changeType .addonBox").find("img").length > 0 )
-
-        {
+        if ($("#changeType .addonBox").find("img").length > 0) {
             // Switch to fiat currency ($ sign)
-            $("#changeType .addonBox").html( psp.getFiatPrefix() );
+            $("#changeType .addonBox").html(psp.getFiatPrefix());
 
             psp.useFiat = true;
 
             psp.amountFiatValue();
 
-            if ( !mobilecheck() )
+            if (!mobilecheck())
 
                 $("#txtAmount").focus();
 
         }
 
-        else
-
-        {
+        else {
             // Switch back to ETH image
-            $("#changeType .addonBox").html('<img src="img/ETH_Border.png" alt="ETH" style="max-width: 100%; max-height: 20px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
+            $("#changeType .addonBox").html('<img src="img/ETHLogo.png" alt="ETH" style="max-width: auto; max-height: 40px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
 
             psp.useFiat = false;
 
             psp.amountFiatValue();
 
-            if ( !mobilecheck() )
+            if (!mobilecheck())
 
                 $("#txtAmount").focus();
 
         }
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#changeType2', function (e)
-
-    {
+    $(document).on("click", '#changeType2', function (e) {
 
         // Check if currently showing the ETH image (contains img tag)
-        if ( $("#changeType2 .addonBox2").find("img").length > 0 )
-
-        {
+        if ($("#changeType2 .addonBox2").find("img").length > 0) {
             // Switch to fiat currency ($ sign)
             $("#changeType2 .addonBox2").html(psp.getFiatPrefix());
 
@@ -2186,23 +2031,21 @@ $(document).ready(function ()
 
             psp.amountFiatValue2();
 
-            if ( !mobilecheck() )
+            if (!mobilecheck())
 
                 $("#txtReceiveAmount").focus();
 
         }
 
-        else
-
-        {
+        else {
             // Switch back to ETH image
-            $("#changeType2 .addonBox2").html('<img src="img/ETH_Border.png" alt="ETH" style="max-width: 100%; max-height: 20px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
+            $("#changeType2 .addonBox2").html('<img src="img/ETHLogo.png" alt="ETH" style="max-width: auto; max-height: 40px; width: auto; height: auto; object-fit: contain; display: inline-block; vertical-align: middle;">');
 
             psp.useFiat2 = false;
 
             psp.amountFiatValue2();
 
-            if ( !mobilecheck() )
+            if (!mobilecheck())
 
                 $("#txtReceiveAmount").focus();
 
@@ -2212,14 +2055,12 @@ $(document).ready(function ()
 
 
 
-    $(document).on("mouseleave", '#tapBox', function (e)
-
-    {
+    $(document).on("mouseleave", '#tapBox', function (e) {
 
         entroMouse.mouseInside = false;
-        
+
         // Clean up any remaining ETH symbols when mouse leaves
-        setTimeout(function() {
+        setTimeout(function () {
             $(".tap").remove();
         }, 1000);
 
@@ -2227,123 +2068,105 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#info', function (e)
-
-    {
+    $(document).on("click", '#info', function (e) {
 
         $("#infoModal").modal("show");
-
-    }); 
-
-
-
-    $(document).on("click", '.openInvoice', function (e)
-
-    {
-
-        num = $(this).attr("invoiceNum");
-
-        invoices = localStorage.invoices;
-
-        invoices = JSON.parse( invoices );
-
-        invoice = invoices[num];
-
-        delete invoice.myAddress;
-
-        urlHash =  btoa( encodeURIComponent( JSON.stringify(invoices[num]) ));
-
-        window.open("http://bitcoin.wallet.ms/request/#" + urlHash,'_blank');
-
-    }); 
-
-
-
-    $(document).on("click", '.deleteInvoice', function (e)
-
-    {
-
-        if ( confirm("Are you sure you want to delete this "+ getTypeName( $("#invoiceType").val() ) +"?") )
-
-        {
-
-            num = $(this).attr("invoiceNum");
-
-            invoices = localStorage.invoices;
-
-            invoices = JSON.parse( invoices );
-
-            type = invoices[num].type;
-
-            invoices.splice( num, 1 );
-
-            localStorage.invoices = JSON.stringify( invoices );
-
-            psp.updateInvoices( type );
-
-        }
-
-    }); 
-
-
-
-    $(document).on("click", '.sweepInvoice', function (e)
-
-    {
-
-        if ( confirm("Are you sure you want to sweep this "+ getTypeName( $("#invoiceType").val() ) +"?") )
-
-        {
-
-            num = $(this).attr("invoiceNum");
-
-            invoices = localStorage.invoices;
-
-            invoices = JSON.parse( invoices );
-
-            invoice = invoices[num];
-
-            psp.sweep( ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode + "_" + invoice.invoiceid))  );
-
-        }
-
-    }); 
-
-
-
-    $(document).on("click", '.openInvoiceWallet', function (e)
-
-    {
-
-        num = $(this).attr("invoiceNum");
-
-        invoices = localStorage.invoices;
-
-        invoices = JSON.parse( invoices );
-
-        urlHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode + "_" + invoices[num].invoiceid)) ;
-
-        window.open("http://bitcoin.wallet.ms/#" + urlHash,'_blank');
 
     });
 
 
 
-    $(document).on("click", '#createWallet', function (event)
+    $(document).on("click", '.openInvoice', function (e) {
 
-    {
+        num = $(this).attr("invoiceNum");
+
+        invoices = localStorage.invoices;
+
+        invoices = JSON.parse(invoices);
+
+        invoice = invoices[num];
+
+        delete invoice.myAddress;
+
+        urlHash = btoa(encodeURIComponent(JSON.stringify(invoices[num])));
+
+        window.open("http://bitcoin.wallet.ms/request/#" + urlHash, '_blank');
+
+    });
+
+
+
+    $(document).on("click", '.deleteInvoice', function (e) {
+
+        if (confirm("Are you sure you want to delete this " + getTypeName($("#invoiceType").val()) + "?")) {
+
+            num = $(this).attr("invoiceNum");
+
+            invoices = localStorage.invoices;
+
+            invoices = JSON.parse(invoices);
+
+            type = invoices[num].type;
+
+            invoices.splice(num, 1);
+
+            localStorage.invoices = JSON.stringify(invoices);
+
+            psp.updateInvoices(type);
+
+        }
+
+    });
+
+
+
+    $(document).on("click", '.sweepInvoice', function (e) {
+
+        if (confirm("Are you sure you want to sweep this " + getTypeName($("#invoiceType").val()) + "?")) {
+
+            num = $(this).attr("invoiceNum");
+
+            invoices = localStorage.invoices;
+
+            invoices = JSON.parse(invoices);
+
+            invoice = invoices[num];
+
+            psp.sweep(ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode + "_" + invoice.invoiceid)));
+
+        }
+
+    });
+
+
+
+    $(document).on("click", '.openInvoiceWallet', function (e) {
+
+        num = $(this).attr("invoiceNum");
+
+        invoices = localStorage.invoices;
+
+        invoices = JSON.parse(invoices);
+
+        urlHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode + "_" + invoices[num].invoiceid));
+
+        window.open("http://bitcoin.wallet.ms/#" + urlHash, '_blank');
+
+    });
+
+
+
+    $(document).on("click", '#createWallet', function (event) {
 
         psp.passcode = $("#createPasswordTxt").val();
 
-        $("#leadTxt").animate({opacity:0},300);
+        $("#leadTxt").animate({ opacity: 0 }, 300);
 
-        setTimeout(function ()
-
-        {
+        setTimeout(function () {
 
             $("#leadTxt").html("Please re-enter your password to verify")
 
-            $("#leadTxt").animate({opacity:1},300);
+            $("#leadTxt").animate({ opacity: 1 }, 300);
 
         }, 500);
 
@@ -2359,13 +2182,9 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#createWallet2', function (event)
+    $(document).on("click", '#createWallet2', function (event) {
 
-    {
-
-        if ( $("#createPasswordTxt").val() !=  psp.passcode )
-
-        {
+        if ($("#createPasswordTxt").val() != psp.passcode) {
 
             $("#loginError").slideDown().html("Passwords did not match! Please try again");
 
@@ -2396,10 +2215,10 @@ $(document).ready(function ()
             // Generate Ethereum wallet from entropy + password
             var combinedString = entroMouse.string + "!" + userPassHash;
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(combinedString));
-            
+
             // Create private key from hash (32 bytes)
             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-            
+
             // Create Ethereum wallet from private key
             var ethWallet = new ethers.Wallet(privateKey);
 
@@ -2410,7 +2229,7 @@ $(document).ready(function ()
             location.replace("#" + entroMouse.string + "!" + passChk);
 
             var address = ethWallet.address;
-            
+
             console.log("Generated Ethereum Address (with password):", address);
             console.log("Network: Sepolia Testnet (USE_TESTNET = " + (typeof USE_TESTNET !== 'undefined' ? USE_TESTNET : 'undefined') + ")");
 
@@ -2432,15 +2251,11 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#openWallet', function (event)
-
-    {
+    $(document).on("click", '#openWallet', function (event) {
 
         var code = window.location.hash.substring(1);
 
-        if (code.indexOf("&") > 0)
-
-        {
+        if (code.indexOf("&") > 0) {
 
             codeArr = code.split("&");
 
@@ -2468,24 +2283,22 @@ $(document).ready(function ()
 
             var passChk = passHash.substring(2, 12); // Remove '0x' prefix and get 10 chars
 
-            if (passChk == hashArr[1])
-
-            {
+            if (passChk == hashArr[1]) {
 
                 // Generate Ethereum wallet from entropy + password
                 var combinedString = hashArr[0] + "!" + userPassHash;
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(combinedString));
-                
+
                 // Create private key from hash (32 bytes)
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-                
+
                 // Create Ethereum wallet from private key
                 var ethWallet = new ethers.Wallet(privateKey);
 
                 location.replace("#" + hashArr[0] + "!" + passChk);
 
                 var address = ethWallet.address;
-                
+
                 console.log("Opening password-protected wallet");
                 console.log("Generated Ethereum Address:", address);
                 console.log("Network: Sepolia Testnet (USE_TESTNET = " + (typeof USE_TESTNET !== 'undefined' ? USE_TESTNET : 'undefined') + ")");
@@ -2496,8 +2309,7 @@ $(document).ready(function ()
 
                 psp.open();
             }
-            else
-            {
+            else {
                 $("#loginError").slideDown().html("Wrong password!");
             }
         } catch (error) {
@@ -2505,9 +2317,7 @@ $(document).ready(function ()
             $("#loginError").slideDown().html("Error opening wallet. Please refresh the page and try again.");
         }
 
-        if (window.qrAddress )
-
-        {
+        if (window.qrAddress) {
 
             $("#sendBox").slideDown();
 
@@ -2529,21 +2339,15 @@ $(document).ready(function ()
 
 
 
-    $(document).on("keyup", '#createPasswordTxt', function (event)
+    $(document).on("keyup", '#createPasswordTxt', function (event) {
 
-    {
-
-        if ($(this).val().length > 0)
-
-        {
+        if ($(this).val().length > 0) {
 
             $("#createWallet, #createWallet2").removeAttr("disabled");
 
         }
 
-        else
-
-        {
+        else {
 
             $("#createWallet, #createWallet2").attr("disabled", "disabled");
 
@@ -2553,21 +2357,15 @@ $(document).ready(function ()
 
 
 
-    $(document).on("keyup", '#importRequestID', function (event)
+    $(document).on("keyup", '#importRequestID', function (event) {
 
-    {
-
-        if ($(this).val().length > 0)
-
-        {
+        if ($(this).val().length > 0) {
 
             $("#importRequestBtn").removeAttr("disabled");
 
         }
 
-        else
-
-        {
+        else {
 
             $("#importRequestBtn").attr("disabled", "disabled");
 
@@ -2577,14 +2375,12 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#importRequestBtn', function (event)
-
-    {
+    $(document).on("click", '#importRequestBtn', function (event) {
 
         // Generate Ethereum wallet from passcode + invoice ID
         var combinedString = psp.passcode + "_" + $("#importRequestID").val();
         var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(combinedString));
-        
+
         // Create private key from hash (32 bytes)
         var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
         var ethWallet = new ethers.Wallet(privateKey);
@@ -2595,29 +2391,25 @@ $(document).ready(function ()
 
         type = $("#invoiceType").val();
 
-        invoice = {address:address,"amount":0,title: "Imported " + getTypeName( type ),invoiceid:$("#importRequestID").val(),description:"",myAddress:psp.address, type:type};
+        invoice = { address: address, "amount": 0, title: "Imported " + getTypeName(type), invoiceid: $("#importRequestID").val(), description: "", myAddress: psp.address, type: type };
 
         invoices = localStorage.invoices;
 
 
 
-        if ( !invoices )
+        if (!invoices) {
 
-        {
-
-            localStorage.invoices =  JSON.stringify([invoice]);    
+            localStorage.invoices = JSON.stringify([invoice]);
 
         }
 
-        else
+        else {
 
-        {
+            invoices = JSON.parse(invoices);
 
-            invoices = JSON.parse( invoices );
+            invoices.push(invoice);
 
-            invoices.push( invoice );
-
-            localStorage.invoices =  JSON.stringify(invoices);    
+            localStorage.invoices = JSON.stringify(invoices);
 
         }
 
@@ -2627,17 +2419,13 @@ $(document).ready(function ()
 
 
 
-        if ( type == "SmartFund" )
-
-        {
+        if (type == "SmartFund") {
 
             psp.openSmartFundBox();
 
         }
 
-        else
-
-        {
+        else {
 
             psp.openSmartRequestBox();
 
@@ -2647,13 +2435,9 @@ $(document).ready(function ()
 
 
 
-    $(document).on("keyup", '#txtReceiveAmount', function (event)
+    $(document).on("keyup", '#txtReceiveAmount', function (event) {
 
-    {
-
-        if ($(this).val().length > 0 && $(this).val() > 0 )
-
-        {
+        if ($(this).val().length > 0 && $(this).val() > 0) {
 
             $("#generateBtn").removeAttr("disabled");
 
@@ -2661,9 +2445,7 @@ $(document).ready(function ()
 
         }
 
-        else
-
-        {
+        else {
 
             $("#generateBtn").attr("disabled", "disabled");
 
@@ -2671,17 +2453,13 @@ $(document).ready(function ()
 
         }
 
-    });  
+    });
 
 
 
-    $(document).on("keyup", '#txtFeeAmount', function (event)
+    $(document).on("keyup", '#txtFeeAmount', function (event) {
 
-    {
-
-        if ($(this).val().length > 0 && $(this).val() > 0 && !isNaN( $(this).val() ) )
-
-        {
+        if ($(this).val().length > 0 && $(this).val() > 0 && !isNaN($(this).val())) {
 
             amount = $(this).val();
 
@@ -2693,57 +2471,47 @@ $(document).ready(function ()
 
             $("#fiatPriceFee").html("(" + psp.getFiatPrefix() + formatMoney(fiatValue) + ")");
 
-            psp.setTxFeePerKb( amount );
+            psp.setTxFeePerKb(amount);
 
         }
 
-        else
-
-        {
+        else {
 
             $("#fiatPriceFee").html("");
 
         }
 
-    });  
+    });
 
 
 
-    $(document).on("keyup", '#txtAmount', function (event)
-
-    {
+    $(document).on("keyup", '#txtAmount', function (event) {
 
         amount = $(this).val();
 
-        if ( psp.useFiat )
+        if (psp.useFiat) {
 
-        {
+            amount = parseFloat(amount) / psp.price;
 
-            amount = parseFloat( amount ) / psp.price;
-
-            amount = btcFormat( amount );
+            amount = btcFormat(amount);
 
         }
 
 
 
-        if ( $(this).val().length > 0 )
-
-        {
+        if ($(this).val().length > 0) {
 
             psp.amountFiatValue();
 
-            $(this).css({"font-size":"24px"});
+            $(this).css({ "font-size": "24px" });
 
         }
 
-        else
-
-        {
+        else {
 
             $("#fiatPrice").html("");
 
-            $(this).css({"font-size":"14px"});
+            $(this).css({ "font-size": "14px" });
 
         }
 
@@ -2752,30 +2520,28 @@ $(document).ready(function ()
         // Check if amount and address are valid for Ethereum
         var amountValid = $(this).val().length > 0 && parseFloat(amount) > 0 && parseFloat(amount) <= psp.balance;
         var addressValid = $("#txtAddress").val().length > 0 && (
-            psp.checkAddress($("#txtAddress").val()) || 
-            psp.checkEmail($("#txtAddress").val()) || 
-            psp.checkTwitter($("#txtAddress").val()) || 
-            psp.checkNFC($("#txtAddress").val()) || 
-            psp.checkDomain($("#txtAddress").val()) || 
+            psp.checkAddress($("#txtAddress").val()) ||
+            psp.checkEmail($("#txtAddress").val()) ||
+            psp.checkTwitter($("#txtAddress").val()) ||
+            psp.checkNFC($("#txtAddress").val()) ||
+            psp.checkDomain($("#txtAddress").val()) ||
             psp.checkGiftCard($("#txtAddress").val())
         );
-        
+
         // Minimum amount check for Ethereum (0.000001 ETH minimum)
         var minAmount = 0.000001;
         var amountAboveMinimum = parseFloat(amount) >= minAmount;
 
-        if (amountValid && addressValid && amountAboveMinimum)
-        {
+        if (amountValid && addressValid && amountAboveMinimum) {
             $("#sendBtn").removeAttr("disabled");
         }
-        else
-        {
+        else {
             $("#sendBtn").attr("disabled", "disabled").html("Send");
         }
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "vapor" ) //Easter egg...SHHH!
+        if ($("#txtAmount").val().toLowerCase() == "vapor") //Easter egg...SHHH!
 
         {
 
@@ -2785,7 +2551,7 @@ $(document).ready(function ()
 
             $("#fiatValue").html("$0.00");
 
-            $("#txtAmount").val("").css({"font-size":"14px"});
+            $("#txtAmount").val("").css({ "font-size": "14px" });
 
             setMsg("Payment Sent!", true);
 
@@ -2793,7 +2559,7 @@ $(document).ready(function ()
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "ballin" ) //Easter egg...SHHH!
+        if ($("#txtAmount").val().toLowerCase() == "ballin") //Easter egg...SHHH!
 
         {
 
@@ -2807,21 +2573,19 @@ $(document).ready(function ()
 
             $("#fiatValue").html(psp.getFiatPrefix() + formatMoney(cash));
 
-            $("#txtAmount").val("").css({"font-size":"14px"});
+            $("#txtAmount").val("").css({ "font-size": "14px" });
 
         }
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "baron" ) //Easter egg...SHHH!
+        if ($("#txtAmount").val().toLowerCase() == "baron") //Easter egg...SHHH!
 
         {
 
             playBeep();
 
-            setTimeout( function()
-
-            {
+            setTimeout(function () {
 
                 playBaron();
 
@@ -2833,146 +2597,117 @@ $(document).ready(function ()
 
                 $("#fiatValue").html(psp.getFiatPrefix() + formatMoney(cash));
 
-                $("#txtAmount").val("").css({"font-size":"14px"});
+                $("#txtAmount").val("").css({ "font-size": "14px" });
 
             }, 500);
 
-        } 
+        }
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "tdfw" ) 
-
-        {
+        if ($("#txtAmount").val().toLowerCase() == "tdfw") {
 
             playTurn();
 
-            $("#txtAmount").val("").css({"font-size":"14px"});
+            $("#txtAmount").val("").css({ "font-size": "14px" });
 
-        } 
+        }
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "stop" ) //Easter egg...SHHH!
+        if ($("#txtAmount").val().toLowerCase() == "stop") //Easter egg...SHHH!
 
         {
 
             psp.snd.pause();
 
-            $("#txtAmount").val("").css({"font-size":"14px"});
+            $("#txtAmount").val("").css({ "font-size": "14px" });
 
         }
 
 
 
-        if ( $("#txtAmount").val().toLowerCase() == "max" || $("#txtAmount").val().toLowerCase() == "all" )
+        if ($("#txtAmount").val().toLowerCase() == "max" || $("#txtAmount").val().toLowerCase() == "all") {
 
-        {
+            // For Ethereum MAX: Send balance minus gas fee
+            // Gas fee is 0.000007 ETH as defined in defaultFee
+            var gasFee = 0.000007;
 
-            bigBalance = btcstr2bignum( psp.balance.toString() );
+            // Calculate maximum transferable amount (balance - gas fee)
+            amount = parseFloat(psp.balance) - gasFee;
 
-            bigFee = btcstr2bignum((estimateTxKb() * psp.txFeePerKb).toString());
-
-            bigAmount = bigBalance.subtract( bigFee );
-
-            // amount = psp.balance - psp.txFee;
-
-            // amount = btcFormat( amount );
-
-            amount = bigAmount / 100000000;
-
-            amount = amount.toFixed(8);
-
-
-
-            if ( amount <= 0 )
-
-            {
-
+            // Ensure amount is valid and positive
+            if (amount <= 0) {
                 amount = 0;
-
+                $("#sendBtn").attr("disabled", "disabled");
+                alert("Insufficient balance to cover gas fees. You need at least " + gasFee + " ETH for the transaction fee.");
             }
-
-            else
-
-            {
-
+            else {
+                // Format to 8 decimal places for Ethereum
+                amount = amount.toFixed(8);
                 $("#sendBtn").removeAttr("disabled");
-
             }
 
-
-
-            $("#txtAmount").val( amount );
-
+            $("#txtAmount").val(amount);
             psp.amountFiatValue();
 
         }
 
-    }); 
+    });
 
 
 
     // Enable/disable send button when address changes
-    $(document).on("keyup", '#txtAddress', function (event)
-    {
+    $(document).on("keyup", '#txtAddress', function (event) {
         // Re-check if send button should be enabled
         var amount = $("#txtAmount").val();
         if (psp.useFiat) {
             amount = parseFloat(amount) / psp.price;
             amount = btcFormat(amount);
         }
-        
+
         var amountValid = $("#txtAmount").val().length > 0 && parseFloat(amount) > 0 && parseFloat(amount) <= psp.balance;
         var addressValid = $(this).val().length > 0 && (
-            psp.checkAddress($(this).val()) || 
-            psp.checkEmail($(this).val()) || 
-            psp.checkTwitter($(this).val()) || 
-            psp.checkNFC($(this).val()) || 
-            psp.checkDomain($(this).val()) || 
+            psp.checkAddress($(this).val()) ||
+            psp.checkEmail($(this).val()) ||
+            psp.checkTwitter($(this).val()) ||
+            psp.checkNFC($(this).val()) ||
+            psp.checkDomain($(this).val()) ||
             psp.checkGiftCard($(this).val())
         );
-        
+
         var minAmount = 0.000001;
         var amountAboveMinimum = parseFloat(amount) >= minAmount;
 
-        if (amountValid && addressValid && amountAboveMinimum)
-        {
+        if (amountValid && addressValid && amountAboveMinimum) {
             $("#sendBtn").removeAttr("disabled");
         }
-        else
-        {
+        else {
             $("#sendBtn").attr("disabled", "disabled").html("Send");
         }
     });
 
-    $(document).on("focus", '#txtAddress', function (event)
+    $(document).on("focus", '#txtAddress', function (event) {
 
-    {
-
-        $(this).css({"background-color":"#FFFFFF", color:"#555555"});
+        $(this).css({ "background-color": "#FFFFFF", color: "#555555" });
 
         $("#oneNameInfo").hide();
-
-    }); 
-
-
-
-    $(document).on("click", '.qr-link img', function (event)
-
-    {
-
-        $(".smallQR").switchClass("smallQR", "bigQR",1);
-
-        $(".bigQR").switchClass("bigQR", "smallQR",1);
 
     });
 
 
 
-    $(document).on("click", '#btnNewRequest', function (event)
+    $(document).on("click", '.qr-link img', function (event) {
 
-    {
+        $(".smallQR").switchClass("smallQR", "bigQR", 1);
+
+        $(".bigQR").switchClass("bigQR", "smallQR", 1);
+
+    });
+
+
+
+    $(document).on("click", '#btnNewRequest', function (event) {
 
         $("#requestForm").slideDown();
 
@@ -2982,13 +2717,9 @@ $(document).ready(function ()
 
 
 
-    $(document).on("blur", '#txtAddress', function (event)
+    $(document).on("blur", '#txtAddress', function (event) {
 
-    {
-
-        if ( $(this).val().length > 0 && !psp.checkAddress( $(this).val() ) )
-
-        {
+        if ($(this).val().length > 0 && !psp.checkAddress($(this).val())) {
 
             $("#oneNameName").html("Loading...");
 
@@ -3000,109 +2731,89 @@ $(document).ready(function ()
 
             $.ajax(
 
-            {
-
-                type: "GET",
-
-                url: "https://bitcoin.wallet.ms/lookup.php?id=" + $("#txtAddress").val(),
-
-                async: true,
-
-                cors: true ,
-
-                dataType: "json",
-
-                data:
-
-                {}
-
-            }).done(function (msg)
-
-            {
-
-                if ( msg.hasOwnProperty( "bitcoin" ) )
-
                 {
 
-                    $("#txtAddress").val(msg.bitcoin.address).css({color:"#4CAE4C"});
+                    type: "GET",
 
-                    if ( msg.hasOwnProperty("name") )
+                    url: "https://bitcoin.wallet.ms/lookup.php?id=" + $("#txtAddress").val(),
 
-                    {
+                    async: true,
 
-                        $("#oneNameName").html( htmlEncode( msg.name.formatted ) );
+                    cors: true,
+
+                    dataType: "json",
+
+                    data:
+
+                        {}
+
+                }).done(function (msg) {
+
+                    if (msg.hasOwnProperty("bitcoin")) {
+
+                        $("#txtAddress").val(msg.bitcoin.address).css({ color: "#4CAE4C" });
+
+                        if (msg.hasOwnProperty("name")) {
+
+                            $("#oneNameName").html(htmlEncode(msg.name.formatted));
+
+                        }
+
+
+
+                        if (msg.hasOwnProperty("avatar")) {
+
+                            $("#oneNameImg").html("<img src=\"" + encodeURI(msg.avatar.url) + "\">");
+
+                        }
+
+                        else {
+
+                            $("#oneNameImg").html("");
+
+                        }
+
+
+
+                        if (mobilecheck()) {
+
+                            $("#oneNameInfo").css({ "right": "55px" });
+
+                        }
+
+
+
+                        $("#oneNameInfo").show();
+
+                        //$("#txtAddress").val(msg.bitcoin.address).css({"background-color":"#52B3EA"});
 
                     }
 
+                    else {
 
+                        // $("#txtAddress").css({"background-color":"#DA9999"});
 
-                    if ( msg.hasOwnProperty("avatar") )
-
-                    {
-
-                        $("#oneNameImg").html("<img src=\"" + encodeURI(msg.avatar.url) + "\">");
+                        $("#oneNameInfo").hide();
 
                     }
 
-                    else
-
-                    {
-
-                        $("#oneNameImg").html("");
-
-                    }
-
-
-
-                    if ( mobilecheck() )
-
-                    {
-
-                        $("#oneNameInfo").css({"right":"55px"});
-
-                    }
-
-
-
-                    $("#oneNameInfo").show();
-
-                    //$("#txtAddress").val(msg.bitcoin.address).css({"background-color":"#52B3EA"});
-
-                }
-
-                else
-
-                {
-
-                    // $("#txtAddress").css({"background-color":"#DA9999"});
-
-                    $("#oneNameInfo").hide();
-
-                }
-
-            });
+                });
 
         }
 
-    }); 
+    });
 
 
 
-    $(document).on("keyup", '#openPasswordTxt', function (event)
+    $(document).on("keyup", '#openPasswordTxt', function (event) {
 
-    {
-
-        if ($(this).val().length > 0)
-
-        {
+        if ($(this).val().length > 0) {
 
             $("#openWallet").removeAttr("disabled");
 
         }
 
-        else
-
-        {
+        else {
 
             $("#openWallet").attr("disabled", "disabled");
 
@@ -3112,9 +2823,7 @@ $(document).ready(function ()
 
 
 
-    function closeTabs()
-
-    {
+    function closeTabs() {
 
         $("#sendBox").slideUp();
 
@@ -3132,23 +2841,17 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#receiveBoxBtn', function (event)
+    $(document).on("click", '#receiveBoxBtn', function (event) {
 
-    {
-
-        if ( $(this).hasClass("active") )
-
-        {
+        if ($(this).hasClass("active")) {
 
             closeTabs();
 
         }
 
-        else
+        else {
 
-        {     
-
-            closeVideo();       
+            closeVideo();
 
             $("#receiveBox").slideDown();
 
@@ -3156,7 +2859,7 @@ $(document).ready(function ()
 
             //--$("#qrvidBox").hide();
 
-            $("#receiveBoxBtn").toggleClass("active", 250 );
+            $("#receiveBoxBtn").toggleClass("active", 250);
 
             $("#sendBoxBtn").removeClass("active");
 
@@ -3164,11 +2867,9 @@ $(document).ready(function ()
 
 
 
-            if ( !mobilecheck() )
+            if (!mobilecheck()) {
 
-            {
-
-                $("#txtReceiveAmount").focus();                
+                $("#txtReceiveAmount").focus();
 
             }
 
@@ -3180,13 +2881,9 @@ $(document).ready(function ()
 
     //DMN
 
-    $(document).on("click", '#sendBoxBtn', function (event)
+    $(document).on("click", '#sendBoxBtn', function (event) {
 
-    {
-
-        if ( $(this).hasClass("active") )
-
-        {
+        if ($(this).hasClass("active")) {
 
             closeVideo();
 
@@ -3194,9 +2891,7 @@ $(document).ready(function ()
 
         }
 
-        else
-
-        {
+        else {
 
             $("#sendBox").slideDown();
 
@@ -3204,7 +2899,7 @@ $(document).ready(function ()
 
             //--$("#qrvidBox").hide();      //dmn
 
-            $("#sendBoxBtn").toggleClass("active", 250 );
+            $("#sendBoxBtn").toggleClass("active", 250);
 
             $("#receiveBoxBtn").removeClass("active");
 
@@ -3212,11 +2907,9 @@ $(document).ready(function ()
 
 
 
-            if ( !mobilecheck() )
+            if (!mobilecheck()) {
 
-            {
-
-                $("#txtAddress").focus();                
+                $("#txtAddress").focus();
 
             }
 
@@ -3226,81 +2919,65 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#generateBtn', function (event)
-
-    {
+    $(document).on("click", '#generateBtn', function (event) {
 
         psp.generate();
 
-    }); 
+    });
 
 
 
-    $(document).on("keyup", '#requestForm input', function (event)
+    $(document).on("keyup", '#requestForm input', function (event) {
 
-    {
-
-        if ( psp.checkInvoice() )
-
-        {
+        if (psp.checkInvoice()) {
 
             $("#btnCreateInvoice").removeAttr("disabled");
 
         }
 
-        else
+        else {
 
-        {
-
-            $("#btnCreateInvoice").attr("disabled","disabled");
+            $("#btnCreateInvoice").attr("disabled", "disabled");
 
         }
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#requestHelp', function (event)
-
-    {
+    $(document).on("click", '#requestHelp', function (event) {
 
         $("#requestHelpText").slideToggle();
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#settingsTitle', function (event)
-
-    {
+    $(document).on("click", '#settingsTitle', function (event) {
 
         $("#settingsChoices,#btnNewRequest").show();
 
         $("#settingsTitle .glyphicon, #settingsCurrency, #settingsMining, #settingsExport, #settingsSweep, #settingsInvoice, #requestForm, #importRequestBox").hide();
 
-        $("#settingsTitleText").html( "Settings" );
+        $("#settingsTitleText").html("Settings");
 
     });
 
 
 
-    $(document).on("click", '#choiceCurrency', function (event)
-
-    {
+    $(document).on("click", '#choiceCurrency', function (event) {
 
         $("#settingsTitle .glyphicon, #settingsCurrency").show();
 
         $("#settingsChoices").hide();
 
-        $("#settingsTitleText").html( "Set Currency" );
+        $("#settingsTitleText").html("Set Currency");
 
     });
 
 
 
-    $(document).on("click", '#choiceSmartRequest', function (event)
-
-    {
+    $(document).on("click", '#choiceSmartRequest', function (event) {
 
         psp.openSmartRequestBox();
 
@@ -3308,9 +2985,7 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#choiceSmartFund', function (event)
-
-    {
+    $(document).on("click", '#choiceSmartFund', function (event) {
 
         psp.openSmartFundBox();
 
@@ -3318,9 +2993,7 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '.importRequest', function (event)
-
-    {
+    $(document).on("click", '.importRequest', function (event) {
 
         psp.openImportRequest();
 
@@ -3328,23 +3001,19 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#cancelBtn', function (event)
-
-    {
+    $(document).on("click", '#cancelBtn', function (event) {
 
         $("#btnNewRequest").show();
 
         $("#requestForm").slideUp();
 
-        psp.updateInvoices( $("#invoiceType").val() );
+        psp.updateInvoices($("#invoiceType").val());
 
-    }); 
+    });
 
 
 
-    $(document).on("click", '#getStarted', function (event)
-
-    {
+    $(document).on("click", '#getStarted', function (event) {
 
         $("#noInvoice").slideUp();
 
@@ -3354,9 +3023,7 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#invoiceLinkReceive', function (event)
-
-    {
+    $(document).on("click", '#invoiceLinkReceive', function (event) {
 
         $("#request").modal("hide");
 
@@ -3364,7 +3031,7 @@ $(document).ready(function ()
 
         psp.openInvoiceBox();
 
-        $("#txtInvoiceAmount").val( $("#txtReceiveAmount").val() );
+        $("#txtInvoiceAmount").val($("#txtReceiveAmount").val());
 
         $("#btnNewRequest").trigger("click");
 
@@ -3372,17 +3039,13 @@ $(document).ready(function ()
 
 
 
-    $("#price").hover( function ()
-
-    {
+    $("#price").hover(function () {
 
         $("#chartBox").stop(true);
 
         psp.get24Chart();
 
-    }, function ()
-
-    {
+    }, function () {
 
         $("#chartBox").stop(true);
 
@@ -3392,15 +3055,13 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#choiceExport', function (event)
-
-    {
+    $(document).on("click", '#choiceExport', function (event) {
 
         $("#settingsTitle .glyphicon, #settingsExport").show();
 
         $("#settingsChoices").hide();
 
-        $("#settingsTitleText").html( "Export Private Keys" );
+        $("#settingsTitleText").html("Export Private Keys");
 
 
 
@@ -3412,16 +3073,16 @@ $(document).ready(function ()
 
             // Generate Ethereum wallet from passcode
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode));
-            
+
             // Create private key from hash (32 bytes)
             var privateKeyBytes = ethers.utils.arrayify(entropyHash).slice(0, 32);
             var ethWallet = new ethers.Wallet(ethers.utils.hexlify(privateKeyBytes));
-            
+
             privateKey = ethWallet.privateKey;
 
-            $("#txtBrain").val( psp.passcode );
+            $("#txtBrain").val(psp.passcode);
 
-            $("#txtPrivate").val( privateKey );
+            $("#txtPrivate").val(privateKey);
         } catch (error) {
             console.error('Error exporting wallet:', error);
             alert('Error exporting wallet: ' + error.message);
@@ -3431,15 +3092,13 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#choiceSweep', function (event)
-
-    {
+    $(document).on("click", '#choiceSweep', function (event) {
 
         $("#settingsTitle .glyphicon, #settingsSweep").show();
 
         $("#settingsChoices").hide();
 
-        $("#settingsTitleText").html( "Sweep Private Keys" );
+        $("#settingsTitleText").html("Sweep Private Keys");
 
     });
 
@@ -3451,21 +3110,15 @@ $(document).ready(function ()
 
 
 
-    $(document).on("keyup", '#settingsSweepWIF', function (event)
+    $(document).on("keyup", '#settingsSweepWIF', function (event) {
 
-    {
-
-        if ($(this).val().length > 0)
-
-        {
+        if ($(this).val().length > 0) {
 
             $("#settingsSweepBtn").removeAttr("disabled");
 
         }
 
-        else
-
-        {
+        else {
 
             $("#settingsSweepBtn").attr("disabled", "disabled");
 
@@ -3475,33 +3128,27 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#settingsSweepBtn', function (event)
+    $(document).on("click", '#settingsSweepBtn', function (event) {
 
-    {
-
-        try
-
-        {
+        try {
 
             // Accept Ethereum private key (hex format with or without 0x prefix)
             var privateKeyInput = $('#settingsSweepWIF').val().trim();
-            
+
             // Remove 0x prefix if present
             if (privateKeyInput.startsWith('0x')) {
                 privateKeyInput = privateKeyInput.substring(2);
             }
-            
+
             // Validate it's a valid hex string and 64 characters (32 bytes)
             if (!/^[0-9a-fA-F]{64}$/.test(privateKeyInput)) {
                 throw new Error("Invalid Ethereum private key format");
             }
-            
+
             // Create Ethereum wallet from private key
             var ethWallet = new ethers.Wallet('0x' + privateKeyInput);
 
-            if ( confirm("Are you sure you want to sweep this private key?") )
-
-            {
+            if (confirm("Are you sure you want to sweep this private key?")) {
 
                 psp.sweep(null, ethWallet);
 
@@ -3512,9 +3159,7 @@ $(document).ready(function ()
 
         }
 
-        catch (err)
-
-        {
+        catch (err) {
 
             alert("Failed to process this WIF Key. Please, enter correct or another WIF Key.");
 
@@ -3530,18 +3175,16 @@ $(document).ready(function ()
 
 
 
-    $("#settingsModal").on("hidden.bs.modal", function() {
+    $("#settingsModal").on("hidden.bs.modal", function () {
 
 
-       $("#settingsSweepWIF").val("")
-       
+        $("#settingsSweepWIF").val("")
+
     });
 
 
 
-    $(document).on("click", '#choiceMining', function (event)
-
-    {
+    $(document).on("click", '#choiceMining', function (event) {
 
         var fiatValue = psp.price * psp.txFeePerKb;
 
@@ -3549,21 +3192,19 @@ $(document).ready(function ()
 
         $("#fiatPriceFee").html("(" + psp.getFiatPrefix() + formatMoney(fiatValue) + ")");
 
-        $("#txtFeeAmount").val( psp.txFeePerKb );
+        $("#txtFeeAmount").val(psp.txFeePerKb);
 
         $("#settingsTitle .glyphicon, #settingsMining").show();
 
         $("#settingsChoices").hide();
 
-        $("#settingsTitleText").html( "Set Mining Fee" );
+        $("#settingsTitleText").html("Set Mining Fee");
 
         $(".settingsOption").removeClass("optionActive");
 
 
 
-        switch ( parseFloat( psp.txFeePerKb ) )
-
-        {
+        switch (parseFloat(psp.txFeePerKb)) {
 
             case defaultFee:
 
@@ -3585,9 +3226,7 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '.miningOptionLeft', function (event)
-
-    {
+    $(document).on("click", '.miningOptionLeft', function (event) {
 
         $(".settingsOption").removeClass("optionActive");
 
@@ -3597,13 +3236,11 @@ $(document).ready(function ()
 
 
 
-        switch ( $(this).find(".settingsOption").attr("type") )
-
-        {
+        switch ($(this).find(".settingsOption").attr("type")) {
 
             case "normal":
 
-                psp.setTxFeePerKb( defaultFee );
+                psp.setTxFeePerKb(defaultFee);
 
                 break;
 
@@ -3625,9 +3262,7 @@ $(document).ready(function ()
 
 
 
-    $(document).on("click", '#btnCreateInvoice', function (event)
-
-    {
+    $(document).on("click", '#btnCreateInvoice', function (event) {
 
         psp.createInvoice();
 
@@ -3643,9 +3278,7 @@ $(document).ready(function ()
 
 
 
-    if (code.indexOf("&") > 0)
-
-    {
+    if (code.indexOf("&") > 0) {
 
         qrLogin = true;
 
@@ -3659,7 +3292,7 @@ $(document).ready(function ()
 
         urlArr = code.split("!");
 
-        userPassHash =  urlArr[1];
+        userPassHash = urlArr[1];
 
         passHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(urlArr[0] + "!" + userPassHash));
 
@@ -3667,9 +3300,7 @@ $(document).ready(function ()
 
         location.replace("#" + urlArr[0] + "!" + passChk);
 
-        if ( qrAddress )
-
-        {
+        if (qrAddress) {
 
             $("#sendBox").slideDown();
 
@@ -3689,9 +3320,7 @@ $(document).ready(function ()
 
 
 
-            if ( qrAddress.indexOf(":") > 0 )
-
-            {
+            if (qrAddress.indexOf(":") > 0) {
 
                 address = qrAddress.match(/[13][1-9A-HJ-NP-Za-km-z]{26,33}/g);
 
@@ -3701,9 +3330,7 @@ $(document).ready(function ()
 
                 qrAddress = address;
 
-                if ( uriAmount != null )
-
-                {
+                if (uriAmount != null) {
 
                     uriAmount = uriAmount[0].replace("=", "");
 
@@ -3711,11 +3338,9 @@ $(document).ready(function ()
 
 
 
-                if ( uriAmount )
+                if (uriAmount) {
 
-                {
-
-                    $("#txtAmount").val( uriAmount );
+                    $("#txtAmount").val(uriAmount);
 
                 }
 
@@ -3731,13 +3356,9 @@ $(document).ready(function ()
 
 
 
-    if (code.length > 9)
+    if (code.length > 9) {
 
-    {
-
-        if (code.indexOf("!") > 0 && !qrLogin)
-
-        {
+        if (code.indexOf("!") > 0 && !qrLogin) {
 
             $(".progress, #tapBox, #passwordCheckBox, #passBox").hide();
 
@@ -3747,13 +3368,9 @@ $(document).ready(function ()
 
 
 
-            if ( !mobilecheck() )
+            if (!mobilecheck()) {
 
-            {
-
-                setTimeout( function ()
-
-                {
+                setTimeout(function () {
 
                     $("#openPasswordTxt").focus();
 
@@ -3767,13 +3384,9 @@ $(document).ready(function ()
 
         }
 
-        else
+        else {
 
-        {
-
-            if ( qrLogin )
-
-            {
+            if (qrLogin) {
 
                 code = psp.passcode;
 
@@ -3789,15 +3402,15 @@ $(document).ready(function ()
 
                 // Generate Ethereum wallet from code/entropy
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(code));
-                
+
                 // Create private key from hash (32 bytes)
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-                
+
                 // Create Ethereum wallet from private key
                 var ethWallet = new ethers.Wallet(privateKey);
 
                 var address = ethWallet.address;
-                
+
                 console.log("Opening wallet from URL hash");
                 console.log("Generated Ethereum Address:", address);
                 console.log("Network: Sepolia Testnet (USE_TESTNET = " + (typeof USE_TESTNET !== 'undefined' ? USE_TESTNET : 'undefined') + ")");
@@ -3816,9 +3429,7 @@ $(document).ready(function ()
 
     }
 
-    else
-
-    {
+    else {
 
         entroMouse.start();
 
@@ -3830,9 +3441,7 @@ $(document).ready(function ()
 
 
 
-function btcFormat (amount)
-
-{
+function btcFormat(amount) {
 
     // amount = parseFloat( amount );
 
@@ -3854,37 +3463,31 @@ function btcFormat (amount)
 
 
 
-function htmlEncode(value){
+function htmlEncode(value) {
 
-  return $('<div/>').text(value).html();
-
-}
-
-
-
-function htmlDecode(value){
-
-  return $('<div/>').html(value).text();
+    return $('<div/>').text(value).html();
 
 }
 
 
 
-function getTypeName ( type )
+function htmlDecode(value) {
 
-{
+    return $('<div/>').html(value).text();
 
-    if ( type == "SmartRequest" )
+}
 
-    {
+
+
+function getTypeName(type) {
+
+    if (type == "SmartRequest") {
 
         return "Payment Request";
 
     }
 
-    else
-
-    {
+    else {
 
         return "Fundraiser";
 
@@ -3896,9 +3499,9 @@ function getTypeName ( type )
 
 function getVideoID(url) {
 
-  var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
-  return (url.match(p)) ? RegExp.$1 : false;
+    return (url.match(p)) ? RegExp.$1 : false;
 
 }
 

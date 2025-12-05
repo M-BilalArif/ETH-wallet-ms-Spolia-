@@ -16,9 +16,9 @@ var SEPOLIA_CHAIN_ID = 11155111;
 var apiUrl = 'https://privacy18.site/bwapi'
 //var apiUrl = 'http://localhost/blockchain/bwapi';
 
-var apiToken = false; 
-var apiUserId = 'testUserId123'; 
-var apiUserKey = 'testUserKey456'; 
+var apiToken = false;
+var apiUserId = 'testUserId123';
+var apiUserKey = 'testUserKey456';
 
 var transactionKey = '';
 
@@ -27,20 +27,20 @@ var checkDomainBitcoinAddress = '';
 
 var checkGiftCardMessage = '';
 var checkGiftCardBitcoinAddress = '';
-var checkGiftCardQR_code = ''; 
+var checkGiftCardQR_code = '';
 var checkGiftCardAmount = '';
 var checkGiftCardName = '';
 var checkGiftCardNum = '';
 
 //Disable loop
-var checkGiftCardLock = 0; 
+var checkGiftCardLock = 0;
 //Global return
 winLoc = window.location;
-var cuDomain = winLoc.protocol + "//"+ winLoc.host +""+ winLoc.pathname
+var cuDomain = winLoc.protocol + "//" + winLoc.host + "" + winLoc.pathname
 
 console.log(cuDomain)
 
-var r_gc; 
+var r_gc;
 
 //END API 
 
@@ -58,7 +58,7 @@ function estimateTxKb() {
     // This tries to be as transparent and pessimistic about computing the
     // number of kB a transaction will be.
 
-    var varintSize = function(value) {
+    var varintSize = function (value) {
         if (value < 253) {
             return 1;
         } else if (value <= 65535) {
@@ -69,25 +69,25 @@ function estimateTxKb() {
         return 9;
     }
 
-    var stringSize = function(length) {
+    var stringSize = function (length) {
         return varintSize(length) + length;
     }
 
     var estimate = 4 +                               // version
-                   varintSize(txFeeUnspentCount) +   // number of inputs
-                   (txFeeUnspentCount * (            // inputs
-                       36 +                          // previous outpoint
-                       varintSize(stringSize(65) +   // script length
-                           stringSize(72)) +
-                       stringSize(65) +              // uncompressed public key size (worst case)
-                       stringSize(72) +              // secp265k1 DER signature size (worst case)
-                       4)) +                         // sequence size
-                   varintSize(2) +                   // size of the number of outputs (max 2)
-                   2 * (                             // outputs size (at most 2)
-                       8 +                           // output value size
-                       varintSize(25) +              // script length size
-                       25) +                         // IP_DUP OP_HASH varint(1) address(20) OP_EQUALVERIFY OP_CHECKSIG 
-                   4;                                // lock time size
+        varintSize(txFeeUnspentCount) +   // number of inputs
+        (txFeeUnspentCount * (            // inputs
+            36 +                          // previous outpoint
+            varintSize(stringSize(65) +   // script length
+                stringSize(72)) +
+            stringSize(65) +              // uncompressed public key size (worst case)
+            stringSize(72) +              // secp265k1 DER signature size (worst case)
+            4)) +                         // sequence size
+        varintSize(2) +                   // size of the number of outputs (max 2)
+        2 * (                             // outputs size (at most 2)
+            8 +                           // output value size
+            varintSize(25) +              // script length size
+            25) +                         // IP_DUP OP_HASH varint(1) address(20) OP_EQUALVERIFY OP_CHECKSIG 
+        4;                                // lock time size
 
     // Where this estimation will over estimate:
     //   - if the DER signature begins with 0's (as DER truncates leading 0's)
@@ -119,40 +119,34 @@ psp = window.psp = {
     "currency": "USD",
     "useFiat": false,
     "useFiat2": false,
-    "firstTime":false,
+    "firstTime": false,
     "currency": "USD",
-    "currencyOptions": ["AUD","BRL","CAD","CHF","CNY","DKK","EUR","GBP","HKD","INR", "ISK", "JPY","KRW","NZD","PLN","RUB","SEK","SGD","THB","TWD","USD","ZAR"],
-    "sweeping":"",
+    "currencyOptions": ["AUD", "BRL", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "INR", "ISK", "JPY", "KRW", "NZD", "PLN", "RUB", "SEK", "SGD", "THB", "TWD", "USD", "ZAR"],
+    "sweeping": "",
     "getBalanceBlock": false,
     "chartLoaded": false,
     "afterSendSuccessful": null,
 
-    "open": function ()
-    {
+    "open": function () {
         $("#settings").show();
 
-        if ( readCookie("currency") != "" )
-        {
+        if (readCookie("currency") != "") {
             this.currency = readCookie("currency");
         }
 
-        if ( readCookie("txFeePerKb") != "" )
-        {
+        if (readCookie("txFeePerKb") != "") {
             this.txFeePerKb = readCookie("txFeePerKb");
         }
 
         //is invoice wallet?
         invoices = localStorage.invoices;
 
-        if ( invoices && invoices != '[]' )
-        {
-            invoices = JSON.parse( invoices );
+        if (invoices && invoices != '[]') {
+            invoices = JSON.parse(invoices);
 
-            for ( i in invoices )
-            {
-                if ( invoices[i].address == this.address )
-                {
-                    $("#walletName").html( invoices[i].title );
+            for (i in invoices) {
+                if (invoices[i].address == this.address) {
+                    $("#walletName").html(invoices[i].title);
                     break;
                 }
             }
@@ -162,25 +156,25 @@ psp = window.psp = {
 
         $("#wallet, #txList").show();
         $("#generate").hide();
-        
+
         // Display address with network indicator
         if (this.address && this.address.length > 0) {
             $("#address").html(this.address);
             console.log("Wallet Address:", this.address);
-            
+
             // Show network indicator (Sepolia Testnet or Mainnet)
             if (typeof USE_TESTNET !== 'undefined' && USE_TESTNET) {
-                $("#networkIndicator").html("(Sepolia Testnet)").css({"color": "#ff9900", "font-size": "12px", "font-weight": "bold"});
+                $("#networkIndicator").html("(Sepolia Testnet)").css({ "color": "#ff9900", "font-size": "12px", "font-weight": "bold" });
                 console.log("Network: Sepolia Testnet");
             } else {
-                $("#networkIndicator").html("(Mainnet)").css({"color": "#4CAE4C", "font-size": "12px", "font-weight": "bold"});
+                $("#networkIndicator").html("(Mainnet)").css({ "color": "#4CAE4C", "font-size": "12px", "font-weight": "bold" });
                 console.log("Network: Mainnet");
             }
         } else {
             console.error("Wallet address is empty!");
             $("#address").html("Address not available");
         }
-        
+
         $(".qrimage").attr("src", generateQRCode("ethereum:" + this.address))
         //$(".qrimage").attr("src", "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=bitcoin%3A" + this.address + "&chld=H|0")
 
@@ -189,7 +183,7 @@ psp = window.psp = {
         // Ethereum doesn't have the same WebSocket API as Bitcoin
         // Instead, we'll poll the balance every 30 seconds
         // You can also use Etherscan's WebSocket API with a paid plan
-        var balanceCheckInterval = setInterval(function() {
+        var balanceCheckInterval = setInterval(function () {
             if (!psp.getBalanceBlock) {
                 psp.getBalance();
             }
@@ -198,26 +192,23 @@ psp = window.psp = {
         // Store interval ID so we can clear it if needed
         psp.balanceCheckInterval = balanceCheckInterval;
 
-        url = "https://bitcoin.wallet.ms/?z=" + ( Math.floor(Math.random() * 9999999) + 1 ) + "#" + psp.passcode + "&{CODE}";
+        url = "https://bitcoin.wallet.ms/?z=" + (Math.floor(Math.random() * 9999999) + 1) + "#" + psp.passcode + "&{CODE}";
         //DMN
-        url2="zxing://scan/?ret=" + encodeURIComponent( url ) + "&SCAN_FORMATS=QR";
+        url2 = "zxing://scan/?ret=" + encodeURIComponent(url) + "&SCAN_FORMATS=QR";
         $("#qrlink").attr("href", "");      //dmn
         //$("#qrlink").attr("href", "#");         //dmn
 
-        if ( psp.firstTime )
-        {
+        if (psp.firstTime) {
             $("#saveURLHolder, #saveURL").show();
-            setTimeout( function()
-            {
+            setTimeout(function () {
                 $("#saveURL").slideUp();
             }, 250000);
-        }        
-        else
-        {
+        }
+        else {
 
         }
 
-        // this.getHistory();
+        this.getHistory();
         // if ( psp.lastTab == "gpg" )
         // {
         //     setTimeout(function ()
@@ -226,25 +217,20 @@ psp = window.psp = {
         //     }, 200);
         // }
 
-        setInterval( function()
-        {
+        setInterval(function () {
             psp.getFiatPrice();
         }, 300000);
     },
 
-    "check": function ()
-    {
-        if ( this.useFiat )
-        {
+    "check": function () {
+        if (this.useFiat) {
             var amount = parseFloat($("#txtAmount").val()) / this.price;
         }
-        else
-        {
-            var amount = $("#txtAmount").val();   
+        else {
+            var amount = $("#txtAmount").val();
         }
 
-        if (amount > this.balance)
-        {
+        if (amount > this.balance) {
             setMsg("You are trying to send more BTC than you have in your balance!");
             return false;
         }
@@ -253,31 +239,28 @@ psp = window.psp = {
 
         var txFee = estimateTxKb() * parseFloat(this.txFeePerKb)
         total = parseFloat(amount) + txFee;
-        total = btcFormat( total );
+        total = btcFormat(total);
 
-        if (total > this.balance)
-        {
+        if (total > this.balance) {
             setMsg("You need to leave enough room for the " + txFee + " ETH fee");
             return false;
         }
 
-        if (parseFloat(amount) <= 0)
-        {
+        if (parseFloat(amount) <= 0) {
             setMsg("Please enter an amount!");
             return false;
         }
 
-        
 
-        if ( !this.checkAddress( $('#txtAddress').val() )  && !this.checkEmail( $('#txtAddress').val() ) && !this.checkTwitter( $('#txtAddress').val() ) && !this.checkNFC( $('#txtAddress').val() ) && !this.checkDomain( $('#txtAddress').val()) && !this.checkGiftCard( $('#txtAddress').val()))
-        {
-            if(checkDomainMessage.length > 1){
+
+        if (!this.checkAddress($('#txtAddress').val()) && !this.checkEmail($('#txtAddress').val()) && !this.checkTwitter($('#txtAddress').val()) && !this.checkNFC($('#txtAddress').val()) && !this.checkDomain($('#txtAddress').val()) && !this.checkGiftCard($('#txtAddress').val())) {
+            if (checkDomainMessage.length > 1) {
                 setMsg(checkDomainMessage);
-            }else{
+            } else {
                 setMsg("Invalid ETH address or Domain address or Email or Gift card!");
             }
-            
-            
+
+
             return false;
         }
 
@@ -288,81 +271,76 @@ psp = window.psp = {
 
         $('#txFee').text(txFee);
 
-       return true;
+        return true;
     },
 
-    "checkEmail": function ( email )
-    {
+    "checkEmail": function (email) {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         return re.test(email);
     },
 
-    "checkTwitter": function ( twitter )
-    {
+    "checkTwitter": function (twitter) {
         var result = twitter.match(/^\s*@(\w{1,15})\s*$/);
         return result && result[1] ? result[1] : null;
     },
 
-    "checkAddress": function ( address )
-    {
+    "checkAddress": function (address) {
         // Check if it's a valid Ethereum address (0x followed by 40 hex characters)
         if (typeof address === 'string' && address.match(/^0x[a-fA-F0-9]{40}$/)) {
             return true;
         }
-        
+
         // Legacy Bitcoin address support (for backward compatibility)
-        try
-        {
+        try {
             if (typeof Bitcoin !== 'undefined' && Bitcoin.base58) {
                 var res = Bitcoin.base58.checkDecode(address);
                 var version = res.version
                 var payload = res.slice(0);
-                if (version == 0 || version == 5 )
+                if (version == 0 || version == 5)
                     return true;
             }
         }
-        catch (err)
-        {
+        catch (err) {
             return false;
         }
-        
+
         return false;
     },
 
-    "apiAuth": function(){
+    "apiAuth": function () {
 
         rn = false;
 
-        
+
         $.ajax({
 
-            url:apiUrl+'/auth/'+apiUserId+'/'+apiUserKey,
-            method:'GET',
+            url: apiUrl + '/auth/' + apiUserId + '/' + apiUserKey,
+            method: 'GET',
             async: false,
-            dataType:'json',
-            error: function(){
+            dataType: 'json',
+            error: function () {
 
-                console.log('error api auth')     
+                console.log('error api auth')
 
                 rn = false;
             },
-            success: function(e){
+            success: function (e) {
 
-                if(typeof(e[0]) != "undefined"){
+                if (typeof (e[0]) != "undefined") {
 
-                    apiToken = e[0].replace(/[/]/g,"|");
+                    apiToken = e[0].replace(/[/]/g, "|");
 
                     apiToken = encodeURIComponent(apiToken);
 
-                    rn = true; 
+                    rn = true;
 
-                }else{
+                } else {
 
                     rn = false;
 
                 }
-                
+
             }
 
         });
@@ -373,128 +351,126 @@ psp = window.psp = {
     },
 
 
-    "checkDomain": function (domain)
-    {
-            rn = false;
+    "checkDomain": function (domain) {
+        rn = false;
 
-            checkDomainMessage = "";
-            checkDomainBitcoinAddress = "";
-
-
-            result = domain.match(/^[^\.]+\.[^\.]+$/);
+        checkDomainMessage = "";
+        checkDomainBitcoinAddress = "";
 
 
-            if(result != null){
+        result = domain.match(/^[^\.]+\.[^\.]+$/);
 
 
-                //Cheking of domain #1
-                $.ajax({
-                    
-                    url:'https://apis.freename.io/api/v1/resolver/FNS/'+domain,
-                    method:'GET',
-                    async: false,
-                    dataType:'json',
-                    error: function(){
+        if (result != null) {
 
 
-                        checkDomainMessage ='Domain not found';
+            //Cheking of domain #1
+            $.ajax({
+
+                url: 'https://apis.freename.io/api/v1/resolver/FNS/' + domain,
+                method: 'GET',
+                async: false,
+                dataType: 'json',
+                error: function () {
 
 
-                    },
-                    success: function(e){
+                    checkDomainMessage = 'Domain not found';
 
-                        
 
-                        if('data' in e){
-
-                            if('records' in e.data){
-
-                                for (k in e.data.records){
-
-                                    record = e.data.records[k]
-                           
-                                    if(record.type == "BTC" && record.value.length > 10 ){
-
-                                        checkDomainBitcoinAddress =record.value;
-
-                                        rn = true;
-
-                                        break
-
-                                    }else{  checkDomainMessage ='Address not found'; }
-              
-
-                                }
-
-                            }else{ console.log('errorAPI: no key "records"') }
-
-                        }else{  console.log('errorAPI: no key "data"') }
+                },
+                success: function (e) {
 
 
 
+                    if ('data' in e) {
 
-                    }
+                        if ('records' in e.data) {
 
-                });
-               
+                            for (k in e.data.records) {
 
+                                record = e.data.records[k]
 
-                //Cheking of domain #2
-                // if(!rn && this.apiAuth()){
+                                if (record.type == "BTC" && record.value.length > 10) {
 
-                //     $.ajax({
+                                    checkDomainBitcoinAddress = record.value;
 
-                //         url:apiUrl+'/domain/'+domain+'/'+apiToken,
-                //         method:'GET',
-                //         async: false,
-                //         dataType:'json',
-                //         error: function(){
+                                    rn = true;
 
-                //              checkDomainMessage ='errorAPI: check domain. Please try later';
+                                    break
 
-                //              rn = false;
-                //         },
-                //         success: function(e){
-
-                //             if(typeof(e[0]) != "undefined"){
-
-                //                 checkDomainBitcoinAddress = e[0];
-
-                //                 rn = true; 
-
-                //             }else{
-
-                //                 checkDomainMessage = 'Recipient '+' "'+domain+'" does not have a valid wallet, associated with that Domain address';
-
-                //                rn = false;
-
-                //             }
-                            
-                //         }
-                            
-                            
-
-                //     });
+                                } else { checkDomainMessage = 'Address not found'; }
 
 
-                // }
+                            }
+
+                        } else { console.log('errorAPI: no key "records"') }
+
+                    } else { console.log('errorAPI: no key "data"') }
 
 
-            }
 
 
-            return rn;
+                }
 
-       
+            });
+
+
+
+            //Cheking of domain #2
+            // if(!rn && this.apiAuth()){
+
+            //     $.ajax({
+
+            //         url:apiUrl+'/domain/'+domain+'/'+apiToken,
+            //         method:'GET',
+            //         async: false,
+            //         dataType:'json',
+            //         error: function(){
+
+            //              checkDomainMessage ='errorAPI: check domain. Please try later';
+
+            //              rn = false;
+            //         },
+            //         success: function(e){
+
+            //             if(typeof(e[0]) != "undefined"){
+
+            //                 checkDomainBitcoinAddress = e[0];
+
+            //                 rn = true; 
+
+            //             }else{
+
+            //                 checkDomainMessage = 'Recipient '+' "'+domain+'" does not have a valid wallet, associated with that Domain address';
+
+            //                rn = false;
+
+            //             }
+
+            //         }
+
+
+
+            //     });
+
+
+            // }
+
+
+        }
+
+
+        return rn;
+
+
 
     },
 
 
-    "checkGiftCard": function (giftCard)
-    {
+    "checkGiftCard": function (giftCard) {
 
 
-        if(checkGiftCardLock==0){
+        if (checkGiftCardLock == 0) {
 
             r_gc = false;
 
@@ -502,36 +478,36 @@ psp = window.psp = {
 
             result = giftCard.match(/(STARBUCKS|AMAZON|VISA)[0-9]{1,2}/g);
 
-            if(result != null && this.apiAuth()){
+            if (result != null && this.apiAuth()) {
 
                 //encode current domain
-                cd = cuDomain.replace(/[/]/g,"|");
+                cd = cuDomain.replace(/[/]/g, "|");
 
                 cd = encodeURIComponent(cd);
 
                 $.ajax({
 
-                    url:apiUrl+'/giftcard/'+giftCard+'/'+cd+'/'+apiToken,
-                    method:'GET',
+                    url: apiUrl + '/giftcard/' + giftCard + '/' + cd + '/' + apiToken,
+                    method: 'GET',
                     async: false,
-                    dataType:'json',
-                    error: function(e){
+                    dataType: 'json',
+                    error: function (e) {
 
-                         checkGiftCardLock=1
+                        checkGiftCardLock = 1
 
-                         checkGiftCardMessage = e.responseText
+                        checkGiftCardMessage = e.responseText
 
 
-                         r_gc = false;
+                        r_gc = false;
 
-                        
+
                     },
-                    success: function(e){
+                    success: function (e) {
 
-                        checkGiftCardLock=1
+                        checkGiftCardLock = 1
 
-                        if(typeof(e['address']) != "undefined"){
-                          
+                        if (typeof (e['address']) != "undefined") {
+
                             checkGiftCardBitcoinAddress = e['address']
 
                             checkGiftCardAmount = e['btc_expected']
@@ -539,19 +515,19 @@ psp = window.psp = {
                             checkGiftCardQR_code = e['qr_code']
 
                             checkGiftCardName = giftCard
-                        
+
 
                             transactionKey = e['transactionKey']
 
 
 
-                            r_gc= true; 
+                            r_gc = true;
 
                         }
-                        
+
                     }
-                        
-                        
+
+
 
                 });
 
@@ -559,7 +535,7 @@ psp = window.psp = {
             }
 
 
-            
+
 
         }
 
@@ -570,58 +546,56 @@ psp = window.psp = {
     //0 - uncorrect email
     //1 - error set email
     //2 - success
-    "setEmailGiftCard":function(email)
-    {
-        rn = 0; 
+    "setEmailGiftCard": function (email) {
+        rn = 0;
 
-        if(this.checkEmail(email)){
+        if (this.checkEmail(email)) {
 
 
             $.ajax({
 
-                url:apiUrl+'/setEmail/'+email+'/'+transactionKey,
-                method:'GET',
+                url: apiUrl + '/setEmail/' + email + '/' + transactionKey,
+                method: 'GET',
                 async: false,
-                error: function(e){
+                error: function (e) {
 
-                    rn = 1; 
-                    
+                    rn = 1;
+
                 },
-                success: function(e){
+                success: function (e) {
 
                     rn = 2;
-                    
+
                 }
-                    
-                    
+
+
 
             });
 
         }
 
 
-        return rn; 
+        return rn;
 
     },
 
-    "checkPay": function ()
-    {
-        
-        
+    "checkPay": function () {
+
+
         $.ajax({
 
-            url:apiUrl+'/chPy/'+transactionKey,
-            method:'GET',
+            url: apiUrl + '/chPy/' + transactionKey,
+            method: 'GET',
             // async: false,
-            dataType:'json',
-            error: function(){
+            dataType: 'json',
+            error: function () {
 
-                rn= false;
+                rn = false;
 
                 console.log("error checkGiftCardPay")
 
             },
-            success: function(e){
+            success: function (e) {
 
                 // status:
                 // 0 - transaction expire 
@@ -629,63 +603,56 @@ psp = window.psp = {
                 // 2 - received payment full 
                 // 3 - received payment low
 
-                if(typeof(e['status']) != "undefined"){
+                if (typeof (e['status']) != "undefined") {
 
                     rn = e;
 
 
-                }else{
+                } else {
 
-                    rn= false;
+                    rn = false;
 
                     console.log("error checkGiftCardPay")
 
                 }
 
-                
+
             }
-          
+
 
         });
 
-       
+
         return rn;
 
     },
 
 
 
-    "checkNFC": function ( address )
-    {
+    "checkNFC": function (address) {
         var result = address.match(/^(nfc18)$/gi);
         return result != null ? true : false;
     },
-    "send": function ()
-    {
-        
-        if (!this.check())
-        {
+    "send": function () {
+
+        if (!this.check()) {
             return;
         }
-        
-        if (this.encrypted)
-        {
-            if ($("#password").val() == "")
-            {
+
+        if (this.encrypted) {
+            if ($("#password").val() == "") {
                 setMsg("Your wallet is encrypted. Please enter a password.");
             }
 
             var passcode = CryptoJS.AES.decrypt(this.passcode, $("#password").val());
             var passcode = passcode.toString(CryptoJS.enc.Utf8);
 
-            if (!passcode)
-            {
+            if (!passcode) {
                 setMsg("Wrong Password!");
                 return;
             }
         }
-        else
-        {
+        else {
             var passcode = this.passcode;
         }
 
@@ -694,10 +661,10 @@ psp = window.psp = {
             if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                 throw new Error('Ethers.js library not loaded');
             }
-            
+
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(passcode));
             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-            
+
             // Configure provider for Sepolia testnet
             var provider;
             if (USE_TESTNET) {
@@ -706,7 +673,7 @@ psp = window.psp = {
                     name: 'sepolia',
                     chainId: SEPOLIA_CHAIN_ID
                 };
-                
+
                 // ALWAYS use StaticJsonRpcProvider to avoid network detection issues
                 // StaticJsonRpcProvider doesn't try to auto-detect the network
                 // This prevents "could not detect network" errors
@@ -723,18 +690,18 @@ psp = window.psp = {
             } else {
                 provider = ethers.getDefaultProvider('homestead'); // Mainnet
             }
-            
+
             var ethWallet = new ethers.Wallet(privateKey, provider);
             console.log("Wallet created with address:", ethWallet.address);
-            
+
             this.txSec = ethWallet.privateKey;
             this.ethProvider = provider; // Store provider for transaction sending
             this.ethWallet = ethWallet; // Store wallet instance
-            
+
             // Verify provider connection (non-blocking, don't wait for it)
-            provider.getBlockNumber().then(function(blockNumber) {
+            provider.getBlockNumber().then(function (blockNumber) {
                 console.log("✅ Provider connected! Latest block:", blockNumber);
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.warn("⚠️ Provider connection check (non-critical):", err.message);
             });
         } catch (error) {
@@ -743,34 +710,32 @@ psp = window.psp = {
             return;
         }
 
-        if ( this.useFiat )
-        {
+        if (this.useFiat) {
             var btcValue = parseFloat($("#txtAmount").val()) / this.price;
-            btcValue = btcFormat( btcValue );
+            btcValue = btcFormat(btcValue);
             this.txAmount = btcValue;
         }
-        else
-        {
+        else {
             this.txAmount = parseFloat($("#txtAmount").val());
-            this.txAmount = btcFormat( this.txAmount );
+            this.txAmount = btcFormat(this.txAmount);
         }
 
         if (psp.checkAddress($("#txtAddress").val())) {
 
-            this.txDest = $('#txtAddress').val().replace(/ /g,'');
+            this.txDest = $('#txtAddress').val().replace(/ /g, '');
 
-                    
+
         } else if (psp.checkEmail($("#txtAddress").val())) {
 
             var random = randomstring();
             var url = document.location.protocol + "//" + document.location.hostname + document.location.pathname + "#" + random;
-            
+
             // Generate Ethereum wallet from random string
             try {
                 if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                     throw new Error('Ethers.js library not loaded');
                 }
-                
+
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(random));
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
                 var ethWallet = new ethers.Wallet(privateKey);
@@ -784,12 +749,12 @@ psp = window.psp = {
             var recipient = $("#txtAddress").val();
             var amount = this.txAmount;
 
-            this.afterSendSuccessful = function() {
-                $.post("mail.php", { sender: prompt("Please enter your name so the recipient knows who sent them Bitcoin."), recipient: recipient, amount: amount, url: url }, function(data) {
+            this.afterSendSuccessful = function () {
+                $.post("mail.php", { sender: prompt("Please enter your name so the recipient knows who sent them Bitcoin."), recipient: recipient, amount: amount, url: url }, function (data) {
                     data == "1" ? alert("An email with a link to a temporary wallet containing " + amount + " ETH has been successfully sent to the chosen recipient.") : prompt("Failed to send an email to the chosen recipient. Please manually send an email to the intended recipient with the following link to a temporary wallet containing their " + this.txAmount + " ETH. Select the text in the box below and press Ctrl-C to copy it.", url);
                 });
             };
-            
+
         }
         /*else if (psp.checkTwitter($("#txtAddress").val())) {
 
@@ -823,13 +788,13 @@ psp = window.psp = {
 
             var random = randomstring();
             var url = document.location.protocol + "//" + document.location.hostname + document.location.pathname + "#" + random;
-            
+
             // Generate Ethereum wallet from random string
             try {
                 if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                     throw new Error('Ethers.js library not loaded');
                 }
-                
+
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(random));
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
                 var ethWallet = new ethers.Wallet(privateKey);
@@ -842,64 +807,64 @@ psp = window.psp = {
             }
             var amount = this.txAmount;
 
-            $('#confirmSend').data("url",url);
+            $('#confirmSend').data("url", url);
 
-            if ("NDEFReader" in window){
+            if ("NDEFReader" in window) {
 
                 try {
 
                     const ndef = new NDEFReader();
 
-                    ndef.write( { records: [{ recordType: "url", data: url }] }, { overwrite: true }) 
-                      .then(function(){
-                        $("#confirmAddress").html( 'NFC tag written successfully!' );
-                        $('#confirmSend').removeAttr("disabled");
-                        $('#confirmSend').text("Close");
-                        $('#confirmSend').data("status","close");
-                      }, function(){
-                        $("#confirmAddress").html( 'Failed on write NFC tag!<br>Try again' );
-                        $('#confirmSend').removeAttr("disabled");
-                        $('#confirmSend').text("Write Tag");
-                        $('#confirmSend').data("status","again");
-                      })
-                      .catch(function(error){
-                        $("#confirmAddress").html( 'Failed on write NFC tag. Error: ' + error + ";<br>Try again" );
-                        $('#confirmSend').removeAttr("disabled");
-                        $('#confirmSend').text("Write Tag");
-                        $('#confirmSend').data("status","again");
-                      });
+                    ndef.write({ records: [{ recordType: "url", data: url }] }, { overwrite: true })
+                        .then(function () {
+                            $("#confirmAddress").html('NFC tag written successfully!');
+                            $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').text("Close");
+                            $('#confirmSend').data("status", "close");
+                        }, function () {
+                            $("#confirmAddress").html('Failed on write NFC tag!<br>Try again');
+                            $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').text("Write Tag");
+                            $('#confirmSend').data("status", "again");
+                        })
+                        .catch(function (error) {
+                            $("#confirmAddress").html('Failed on write NFC tag. Error: ' + error + ";<br>Try again");
+                            $('#confirmSend').removeAttr("disabled");
+                            $('#confirmSend').text("Write Tag");
+                            $('#confirmSend').data("status", "again");
+                        });
 
                 } catch (error) {
 
-                    $("#confirmAddress").html( 'Failed on write NFC tag. Error: ' + error + ";<br>Try again" );
+                    $("#confirmAddress").html('Failed on write NFC tag. Error: ' + error + ";<br>Try again");
                     $('#confirmSend').removeAttr("disabled");
                     $('#confirmSend').text("Write Tag");
-                    $('#confirmSend').data("status","again");
+                    $('#confirmSend').data("status", "again");
 
                 }
 
-            }else{
+            } else {
 
-                $("#confirmAddress").html( 'Sorry! NFC is not supported in your device' );
+                $("#confirmAddress").html('Sorry! NFC is not supported in your device');
                 $('#confirmSend').removeAttr("disabled");
                 $('#confirmSend').text("Close");
-                $('#confirmSend').data("status","close");
+                $('#confirmSend').data("status", "close");
 
             }
 
-        }else if (psp.checkDomain($("#txtAddress").val())) {
+        } else if (psp.checkDomain($("#txtAddress").val())) {
 
             this.txDest = checkDomainBitcoinAddress;
 
-                    
-         }
+
+        }
 
         else if (psp.checkGiftCard($("#txtAddress").val())) {
 
             this.txDest = checkGiftCardBitcoinAddress;
 
             this.txAmount = checkGiftCardAmount;
-                
+
         }
 
         // Send Ethereum transaction using ethers.js
@@ -950,108 +915,102 @@ psp = window.psp = {
 
         // Get gas price - estimate from network or use default
         var self = this;
-        
+
         // Use a promise chain that handles network errors gracefully
         Promise.resolve()
-        .then(function() {
-            // Try to get gas price from network
-            return self.ethProvider.getGasPrice();
-        })
-        .then(function(gasPrice) {
-            console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"), "gwei");
-            return gasPrice;
-        })
-        .catch(function(gasError) {
-            // Fallback to default if estimation fails
-            console.log("Gas price estimation failed, using default 20 gwei");
-            return ethers.utils.parseUnits("20", "gwei");
-        })
-        .then(function(gasPrice) {
-            // Send transaction with the gas price (either estimated or default)
-            console.log("Sending transaction with gas price:", ethers.utils.formatUnits(gasPrice, "gwei"), "gwei");
-            return self.ethWallet.sendTransaction({
-                to: recipientAddress,
-                value: amountWei,
-                gasPrice: gasPrice
+            .then(function () {
+                // Try to get gas price from network
+                return self.ethProvider.getGasPrice();
+            })
+            .then(function (gasPrice) {
+                console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"), "gwei");
+                return gasPrice;
+            })
+            .catch(function (gasError) {
+                // Fallback to default if estimation fails
+                console.log("Gas price estimation failed, using default 20 gwei");
+                return ethers.utils.parseUnits("20", "gwei");
+            })
+            .then(function (gasPrice) {
+                // Send transaction with the gas price (either estimated or default)
+                console.log("Sending transaction with gas price:", ethers.utils.formatUnits(gasPrice, "gwei"), "gwei");
+                return self.ethWallet.sendTransaction({
+                    to: recipientAddress,
+                    value: amountWei,
+                    gasPrice: gasPrice
+                });
+            })
+            .then(function (tx) {
+                console.log("Transaction sent:", tx.hash);
+                setMsg("Transaction sent! Hash: " + tx.hash);
+
+                // Wait for transaction to be mined
+                $("#sendBtn").html("Confirming...");
+                return tx.wait();
+            })
+            .then(function (receipt) {
+                console.log("Transaction confirmed:", receipt);
+                setMsg("Transaction confirmed! Hash: " + receipt.transactionHash);
+
+                // Call success callback if exists
+                if (self.afterSendSuccessful) {
+                    self.afterSendSuccessful();
+                }
+
+                // Update balance and history
+                setTimeout(function () {
+                    self.getBalance();
+                    self.getHistory();
+                }, 2000);
+
+                // Reset UI
+                $("#sendBtn").removeAttr("disabled");
+                $("#sendBtn").html("Send");
+                $("#txtAmount").val("");
+                $("#txtAddress").val("");
+
+                // Show success message
+                psp.txComplete();
+            })
+            .catch(function (error) {
+                console.error("Transaction error:", error);
+
+                var errorMsg = "Transaction failed: ";
+                if (error.message) {
+                    errorMsg += error.message;
+                } else if (error.reason) {
+                    errorMsg += error.reason;
+                } else {
+                    errorMsg += "Unknown error";
+                }
+
+                setMsg(errorMsg);
+
+                // Reset UI
+                $("#sendBtn").removeAttr("disabled");
+                $("#sendBtn").html("Send");
             });
-        })
-        .then(function(tx) {
-            console.log("Transaction sent:", tx.hash);
-            setMsg("Transaction sent! Hash: " + tx.hash);
-            
-            // Wait for transaction to be mined
-            $("#sendBtn").html("Confirming...");
-            return tx.wait();
-        })
-        .then(function(receipt) {
-            console.log("Transaction confirmed:", receipt);
-            setMsg("Transaction confirmed! Hash: " + receipt.transactionHash);
-            
-            // Call success callback if exists
-            if (self.afterSendSuccessful) {
-                self.afterSendSuccessful();
-            }
-            
-            // Update balance and history
-            setTimeout(function() {
-                self.getBalance();
-                self.getHistory();
-            }, 2000);
-            
-            // Reset UI
-            $("#sendBtn").removeAttr("disabled");
-            $("#sendBtn").html("Send");
-            $("#txtAmount").val("");
-            $("#txtAddress").val("");
-            
-            // Show success message
-            psp.txComplete();
-        })
-        .catch(function(error) {
-            console.error("Transaction error:", error);
-            
-            var errorMsg = "Transaction failed: ";
-            if (error.message) {
-                errorMsg += error.message;
-            } else if (error.reason) {
-                errorMsg += error.reason;
-            } else {
-                errorMsg += "Unknown error";
-            }
-            
-            setMsg(errorMsg);
-            
-            // Reset UI
-            $("#sendBtn").removeAttr("disabled");
-            $("#sendBtn").html("Send");
-        });
     },
 
-    "sendAndNFC": function ()
-    {
-        if (!this.check())
-        {
+    "sendAndNFC": function () {
+        if (!this.check()) {
             return;
         }
 
-        if (this.encrypted)
-        {
-            if ($("#password").val() == "")
-            {
+        if (this.encrypted) {
+            if ($("#password").val() == "") {
                 setMsg("Your wallet is encrypted. Please enter a password.");
             }
 
             var passcode = CryptoJS.AES.decrypt(this.passcode, $("#password").val());
             var passcode = passcode.toString(CryptoJS.enc.Utf8);
 
-            if (!passcode)
-            {
+            if (!passcode) {
                 setMsg("Wrong Password!");
                 return;
             }
         }
-        else
-        {
+        else {
             var passcode = this.passcode;
         }
 
@@ -1060,10 +1019,10 @@ psp = window.psp = {
             if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                 throw new Error('Ethers.js library not loaded');
             }
-            
+
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(passcode));
             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-            
+
             // Configure provider for Sepolia testnet
             var provider;
             if (USE_TESTNET) {
@@ -1072,7 +1031,7 @@ psp = window.psp = {
                     name: 'sepolia',
                     chainId: SEPOLIA_CHAIN_ID
                 };
-                
+
                 // ALWAYS use StaticJsonRpcProvider to avoid network detection issues
                 // StaticJsonRpcProvider doesn't try to auto-detect the network
                 // This prevents "could not detect network" errors
@@ -1089,18 +1048,18 @@ psp = window.psp = {
             } else {
                 provider = ethers.getDefaultProvider('homestead'); // Mainnet
             }
-            
+
             var ethWallet = new ethers.Wallet(privateKey, provider);
             console.log("Wallet created with address:", ethWallet.address);
-            
+
             this.txSec = ethWallet.privateKey;
             this.ethProvider = provider; // Store provider for transaction sending
             this.ethWallet = ethWallet; // Store wallet instance
-            
+
             // Verify provider connection (non-blocking, don't wait for it)
-            provider.getBlockNumber().then(function(blockNumber) {
+            provider.getBlockNumber().then(function (blockNumber) {
                 console.log("✅ Provider connected! Latest block:", blockNumber);
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.warn("⚠️ Provider connection check (non-critical):", err.message);
             });
         } catch (error) {
@@ -1109,30 +1068,28 @@ psp = window.psp = {
             return;
         }
 
-        if ( this.useFiat )
-        {
+        if (this.useFiat) {
             var btcValue = parseFloat($("#txtAmount").val()) / this.price;
-            btcValue = btcFormat( btcValue );
+            btcValue = btcFormat(btcValue);
             this.txAmount = btcValue;
         }
-        else
-        {
+        else {
             this.txAmount = parseFloat($("#txtAmount").val());
-            this.txAmount = btcFormat( this.txAmount );
+            this.txAmount = btcFormat(this.txAmount);
         }
 
         if (psp.checkAddress($("#txtAddress").val())) {
-            this.txDest = $('#txtAddress').val().replace(/ /g,'');
+            this.txDest = $('#txtAddress').val().replace(/ /g, '');
         } else if (psp.checkEmail($("#txtAddress").val())) {
             var random = randomstring();
             var url = document.location.protocol + "//" + document.location.hostname + document.location.pathname + "#" + random;
-            
+
             // Generate Ethereum wallet from random string
             try {
                 if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                     throw new Error('Ethers.js library not loaded');
                 }
-                
+
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(random));
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
                 var ethWallet = new ethers.Wallet(privateKey);
@@ -1146,47 +1103,47 @@ psp = window.psp = {
             var recipient = $("#txtAddress").val();
             var amount = this.txAmount;
 
-            var nextAction = function(){
-                $.post("mail.php", { sender: prompt("Please enter your name so the recipient knows who sent them Bitcoin."), recipient: recipient, amount: amount, url: url }, function(data) {
+            var nextAction = function () {
+                $.post("mail.php", { sender: prompt("Please enter your name so the recipient knows who sent them Bitcoin."), recipient: recipient, amount: amount, url: url }, function (data) {
                     data == "1" ? alert("An email with a link to a temporary wallet containing " + amount + " BTC has been successfully sent to the chosen F.") : prompt("Failed to send an email to the chosen recipient. Please manually send an email to the intended recipient with the following link to a temporary wallet containing their " + this.txAmount + " BTC. Select the text in the box below and press Ctrl-C to copy it.", url);
                 });
             };
 
-            this.afterSendSuccessful = function() {
-                if ("NDEFReader" in window){
+            this.afterSendSuccessful = function () {
+                if ("NDEFReader" in window) {
                     try {
                         const ndef = new NDEFReader();
                         //await ndef.write(url)
-                        ndef.write( { records: [{ recordType: "url", data: url }] }, { overwrite: true }) 
-                          .then(function(){
-                            alert('NFC tag written successfully!');
-                            nextAction();
-                          }, function(){
-                            alert('Failed on write NFC tag!');
-                            nextAction();
-                          })
-                          .catch(function(error){
-                            alert('Failed on write NFC tag. Error: ' + error );
-                            nextAction();
-                          });
+                        ndef.write({ records: [{ recordType: "url", data: url }] }, { overwrite: true })
+                            .then(function () {
+                                alert('NFC tag written successfully!');
+                                nextAction();
+                            }, function () {
+                                alert('Failed on write NFC tag!');
+                                nextAction();
+                            })
+                            .catch(function (error) {
+                                alert('Failed on write NFC tag. Error: ' + error);
+                                nextAction();
+                            });
                         //log("> Message written");
                     } catch (error) {
-                        alert('Failed on write NFC tag. Error: ' + error );
+                        alert('Failed on write NFC tag. Error: ' + error);
                         nextAction();
                     }
                 }
-               
+
             };
         } else if (psp.checkTwitter($("#txtAddress").val())) {
             var random = randomstring();
             var url = document.location.protocol + "//" + document.location.hostname + document.location.pathname + "#" + random;
-            
+
             // Generate Ethereum wallet from random string
             try {
                 if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                     throw new Error('Ethers.js library not loaded');
                 }
-                
+
                 var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(random));
                 var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
                 var ethWallet = new ethers.Wallet(privateKey);
@@ -1199,43 +1156,42 @@ psp = window.psp = {
             }
             var amount = this.txAmount;
 
-            var nextAction = function(){
+            var nextAction = function () {
                 window.open("https://twitter.com/messages/compose?text=" + encodeURIComponent("Hey, I'm sending you Ethereum! Exactly " + amount + " ETH is located at the following secure link. Please do not share this link with anyone or you may lose your Ethereum. " + url));
             };
 
-            this.afterSendSuccessful = function() {
-                if ("NDEFReader" in window){
+            this.afterSendSuccessful = function () {
+                if ("NDEFReader" in window) {
                     try {
                         const ndef = new NDEFReader();
-                        ndef.write( { records: [{ recordType: "url", data: url }] }, { overwrite: true }) 
-                          .then(function(){
-                            alert('NFC tag written successfully!');
-                            nextAction();
-                          }, function(){
-                            alert('Failed on write NFC tag!');
-                            nextAction();
-                          })
-                          .catch(function(error){
-                            alert('Failed on write NFC tag. Error: ' + error );
-                            nextAction();
-                          });
+                        ndef.write({ records: [{ recordType: "url", data: url }] }, { overwrite: true })
+                            .then(function () {
+                                alert('NFC tag written successfully!');
+                                nextAction();
+                            }, function () {
+                                alert('Failed on write NFC tag!');
+                                nextAction();
+                            })
+                            .catch(function (error) {
+                                alert('Failed on write NFC tag. Error: ' + error);
+                                nextAction();
+                            });
                     } catch (error) {
-                        alert('Failed on write NFC tag. Error: ' + error );
+                        alert('Failed on write NFC tag. Error: ' + error);
                         nextAction();
                     }
                 }
             };
         }
-        
+
         // Send Ethereum transaction using ethers.js
         this.sendEthereumTransaction();
 
     },
-    
-    "sweep": function ( code, ethWallet )
-    {
+
+    "sweep": function (code, ethWallet) {
         var self = this;
-        
+
         if (code !== null) {
             // Generate Ethereum wallet from code
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(code));
@@ -1278,7 +1234,7 @@ psp = window.psp = {
 
         // Get balance from source wallet
         provider.getBalance(sourceAddress)
-            .then(function(balanceWei) {
+            .then(function (balanceWei) {
                 console.log("Source wallet balance (Wei):", balanceWei.toString());
                 console.log("Source wallet balance (ETH):", ethers.utils.formatEther(balanceWei));
 
@@ -1295,25 +1251,25 @@ psp = window.psp = {
 
                 // Estimate gas for the transaction
                 $("#settingsSweepBtn").html("Estimating gas...");
-                
+
                 // Get gas price
                 return provider.getGasPrice()
-                    .then(function(gasPrice) {
+                    .then(function (gasPrice) {
                         console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"), "gwei");
-                        
+
                         // Add 10% buffer to gas price to account for fluctuations
                         var bufferedGasPrice = gasPrice.mul(110).div(100);
                         console.log("Buffered gas price (+10%):", ethers.utils.formatUnits(bufferedGasPrice, "gwei"), "gwei");
-                        
+
                         // Standard gas limit for ETH transfer
                         var gasLimit = ethers.BigNumber.from(21000);
-                        
+
                         // Calculate total gas cost in Wei (using buffered gas price)
                         var totalGasCost = bufferedGasPrice.mul(gasLimit);
-                        
+
                         console.log("Estimated gas cost (Wei):", totalGasCost.toString());
                         console.log("Estimated gas cost (ETH):", ethers.utils.formatEther(totalGasCost));
-                        
+
                         // Calculate amount to send in Wei (balance - gas cost)
                         // Work entirely in Wei to avoid precision loss
                         if (balanceWei.lte(totalGasCost)) {
@@ -1330,13 +1286,13 @@ psp = window.psp = {
 
                         // Calculate exact amount to send (all calculations in Wei)
                         var amountToSendWei = balanceWei.sub(totalGasCost);
-                        
+
                         console.log("Amount to send (Wei):", amountToSendWei.toString());
                         console.log("Amount to send (ETH):", ethers.utils.formatEther(amountToSendWei));
 
                         // Send transaction
                         $("#settingsSweepBtn").html("Sending...");
-                        
+
                         return sourceWallet.sendTransaction({
                             to: destinationAddress,
                             value: amountToSendWei,
@@ -1345,36 +1301,36 @@ psp = window.psp = {
                         });
                     });
             })
-            .then(function(tx) {
+            .then(function (tx) {
                 if (!tx) return; // Transaction was cancelled due to insufficient funds
-                
+
                 console.log("Sweep transaction sent:", tx.hash);
                 $("#settingsSweepBtn").html("Confirming...");
-                
+
                 // Wait for transaction confirmation
                 return tx.wait();
             })
-            .then(function(receipt) {
+            .then(function (receipt) {
                 console.log("Sweep transaction confirmed:", receipt.transactionHash);
                 alert("Sweep successful! Transaction hash: " + receipt.transactionHash);
-                
+
                 // Restore original address
                 psp.address = psp.sweeping;
                 psp.sweeping = "";
-                
+
                 // Update balance
-                setTimeout(function() {
+                setTimeout(function () {
                     psp.getBalance();
                     psp.getHistory();
                 }, 2000);
-                
+
                 // Reset UI
                 $("#settingsSweepBtn").removeAttr("disabled");
                 $("#settingsSweepBtn").html("Sweep");
                 $("#settingsSweepWIF").val("");
                 $('#settingsModal').modal('hide');
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error("Sweep error:", error);
                 var errorMsg = "Sweep failed: ";
                 if (error.message) {
@@ -1385,11 +1341,11 @@ psp = window.psp = {
                     errorMsg += "Unknown error";
                 }
                 alert(errorMsg);
-                
+
                 // Restore original address
                 psp.address = psp.sweeping;
                 psp.sweeping = "";
-                
+
                 // Reset UI
                 $("#settingsSweepBtn").removeAttr("disabled");
                 $("#settingsSweepBtn").html("Sweep");
@@ -1397,89 +1353,78 @@ psp = window.psp = {
             });
     },
 
-    "resetInvoiceID": function ()
-    {
+    "resetInvoiceID": function () {
         microtime = new Date().getTime();
-        microHash = Bitcoin.Crypto.SHA256( microtime.toString() );
+        microHash = Bitcoin.Crypto.SHA256(microtime.toString());
         invoiceID = microHash.substring(0, 10);
-        $("#txtInvoiceID").val( invoiceID );
+        $("#txtInvoiceID").val(invoiceID);
     },
 
-    "openSmartRequestBox": function ()
-    {
+    "openSmartRequestBox": function () {
         $("#settingsTitle .glyphicon, #settingsInvoice").show();
         $("#youtubeLinkBox").hide();
-        $("#settingsTitleText").html( "Payment Request Manager" );
+        $("#settingsTitleText").html("Payment Request Manager");
 
         psp.resetInvoiceID();
-        psp.updateInvoices( "SmartRequest" );
+        psp.updateInvoices("SmartRequest");
 
         $("#invoiceType").val("SmartRequest");
-        $("#headerBalance").html( "Paid" );
-        $("#headerAmount").html( "Requested" );
-        $("#btnCreateInvoice, #btnNewRequest").html( "Create Payment Request");
+        $("#headerBalance").html("Paid");
+        $("#headerAmount").html("Requested");
+        $("#btnCreateInvoice, #btnNewRequest").html("Create Payment Request");
     },
 
-    "openSmartFundBox": function ()
-    {
+    "openSmartFundBox": function () {
         $("#settingsTitle .glyphicon, #settingsInvoice").show();
-        $("#settingsTitleText").html( "Fundraiser Manager" );
+        $("#settingsTitleText").html("Fundraiser Manager");
         $("#youtubeLinkBox").show();
         $("#txtYoutube").val("");
 
         microtime = new Date().getTime();
-        microHash = Bitcoin.Crypto.SHA256( microtime.toString() );
+        microHash = Bitcoin.Crypto.SHA256(microtime.toString());
         invoiceID = microHash.substring(0, 10);
 
-        $("#txtInvoiceID").val( invoiceID );
+        $("#txtInvoiceID").val(invoiceID);
 
-        psp.updateInvoices( "SmartFund" );
+        psp.updateInvoices("SmartFund");
 
         $("#invoiceType").val("SmartFund");
-        $("#headerBalance").html( "Raised" );
-        $("#headerAmount").html( "Goal" );
-        $("#btnCreateInvoice, #btnNewRequest").html( "Create Fundraiser");
+        $("#headerBalance").html("Raised");
+        $("#headerAmount").html("Goal");
+        $("#btnCreateInvoice, #btnNewRequest").html("Create Fundraiser");
     },
 
-    "openImportRequest": function ()
-    {
+    "openImportRequest": function () {
         type = $("#invoiceType").val();
         $("#importRequestBox").slideDown();
         $("#settingsInvoice, #requestForm").hide();
     },
 
-    "generate": function ()
-    {
+    "generate": function () {
         $("#txtReceiveAmount").blur();
         $('html, body').animate({ scrollTop: 0 }, 'fast');
 
-        setTimeout( function () {
+        setTimeout(function () {
             $("#request").modal("show");
             psp.generateNow();
         }, 1000);
     },
 
-    "checkInvoice": function ()
-    {
-        if ( !psp.address )
-        {
+    "checkInvoice": function () {
+        if (!psp.address) {
             return false;
         }
 
-        if ( isNaN( $("#txtInvoiceAmount").val() ) || $("#txtInvoiceAmount").val() <= 0 || $("#txtInvoiceAmount").val() == "" || $("#txtInvoiceTitle").val() == "" )
-        {
+        if (isNaN($("#txtInvoiceAmount").val()) || $("#txtInvoiceAmount").val() <= 0 || $("#txtInvoiceAmount").val() == "" || $("#txtInvoiceTitle").val() == "") {
             return false;
         }
 
-        if ( $("#txtInvoiceID").val() == "" )
-        {
+        if ($("#txtInvoiceID").val() == "") {
             return false;
         }
 
-        if ( $("#txtYoutube").val() !== "" )
-        {
-            if ( getVideoID( $("#txtYoutube").val() ) == false )
-            {
+        if ($("#txtYoutube").val() !== "") {
+            if (getVideoID($("#txtYoutube").val()) == false) {
                 return false;
             }
         }
@@ -1487,10 +1432,8 @@ psp = window.psp = {
         return true;
     },
 
-    "createInvoice": function ()
-    {
-        if ( !this.checkInvoice() )
-        {
+    "createInvoice": function () {
+        if (!this.checkInvoice()) {
             return false;
         }
 
@@ -1499,7 +1442,7 @@ psp = window.psp = {
             if (typeof ethers === 'undefined' || typeof ethers.utils === 'undefined') {
                 throw new Error('Ethers.js library not loaded');
             }
-            
+
             var combinedString = this.passcode + "_" + $("#txtInvoiceID").val();
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(combinedString));
             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
@@ -1511,23 +1454,21 @@ psp = window.psp = {
             return;
         }
 
-        amount = parseFloat( $("#txtInvoiceAmount").val() );
+        amount = parseFloat($("#txtInvoiceAmount").val());
         title = $("#txtInvoiceTitle").val();
         type = $("#invoiceType").val();
         video = $("#txtYoutube").val();
 
-        invoice = {address:address,"amount":amount,title:title,invoiceid:$("#txtInvoiceID").val(),description:$("#txtInvoiceDescription").val(),myAddress:psp.address, type:type, video:video};
+        invoice = { address: address, "amount": amount, title: title, invoiceid: $("#txtInvoiceID").val(), description: $("#txtInvoiceDescription").val(), myAddress: psp.address, type: type, video: video };
         invoices = localStorage.invoices;
 
-        if ( !invoices )
-        {
-            localStorage.invoices =  JSON.stringify([invoice]);    
+        if (!invoices) {
+            localStorage.invoices = JSON.stringify([invoice]);
         }
-        else
-        {
-            invoices = JSON.parse( invoices );
-            invoices.push( invoice );
-            localStorage.invoices =  JSON.stringify(invoices);    
+        else {
+            invoices = JSON.parse(invoices);
+            invoices.push(invoice);
+            localStorage.invoices = JSON.stringify(invoices);
         }
 
         $("#txtInvoiceTitle, #txtInvoiceAmount, #txtInvoiceDescription").val("");
@@ -1545,34 +1486,30 @@ psp = window.psp = {
 
         delete invoice.myAddress;
 
-        urlHash =  btoa( encodeURIComponent( JSON.stringify(invoice) ));
+        urlHash = btoa(encodeURIComponent(JSON.stringify(invoice)));
 
-        psp.updateInvoices( invoice.type );
+        psp.updateInvoices(invoice.type);
 
         $("#btnNewRequest").show();
     },
 
-    "generateNow": function ()
-    {
+    "generateNow": function () {
         amount = $("#txtReceiveAmount").val();
 
-        if ( this.useFiat2 )
-        {
-            amount = parseFloat( amount ) / this.price;
-            amount = btcFormat( amount );
+        if (this.useFiat2) {
+            amount = parseFloat(amount) / this.price;
+            amount = btcFormat(amount);
         }
 
 
-        $("#receiveQR").attr("src", generateQRCode("ethereum:"+this.address+"?value="+amount));
-//      $("#receiveQR").attr("src", "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=bitcoin%3A" + this.address + "%3Famount%3D" + amount + "&chld=H|0");
+        $("#receiveQR").attr("src", generateQRCode("ethereum:" + this.address + "?value=" + amount));
+        //      $("#receiveQR").attr("src", "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=bitcoin%3A" + this.address + "%3Famount%3D" + amount + "&chld=H|0");
         $("#generateAmount").html(amount);
-        $("#generateAddress").html( this.address );
+        $("#generateAddress").html(this.address);
     },
 
-    "updateInvoices": function ( type )
-    {
-        if ( !type )
-        {
+    "updateInvoices": function (type) {
+        if (!type) {
             type = "SmartFund";
         }
 
@@ -1583,55 +1520,48 @@ psp = window.psp = {
 
         myInvoiceCount = 0;
 
-        if ( invoices && invoices != '[]' )
-        {
-            invoices = JSON.parse( invoices );
+        if (invoices && invoices != '[]') {
+            invoices = JSON.parse(invoices);
             addresses = [];
-            for ( i in invoices )
-            {
-                if ( invoices[i].myAddress == psp.address && (invoices[i].type==type || !invoices[i].type) )
-                {
-                    addresses.push( invoices[i].address );
-                    myInvoiceCount ++;
-                    $("#invoicesBody").prepend( "<tr><td><a class='openInvoice' invoiceNum='" + i + "'>" + htmlEncode( invoices[i].title ) + "</a></td><td>" + htmlEncode( invoices[i].invoiceid ) + "</td><td class='hidden-sm hidden-xs' id='inv_" + invoices[i].address + "'></td><td >" + htmlEncode( invoices[i].amount.toFixed(8) ) + "</td><td style='text-align:right;'><a class='openInvoiceWallet' title='Open " + getTypeName( type ) + " Wallet' invoiceNum='" + i + "'><span class='glyphicon glyphicon-folder-open'></span></a> <a class='sweepInvoice' title='Sweep Funds' invoiceNum='" + i + "'><span class='glyphicon glyphicon-log-in'></span></a> <a class='deleteInvoice' title='Delete' invoiceNum='" + i + "'><span class='glyphicon glyphicon-trash'></span></a></td></tr>" );
+            for (i in invoices) {
+                if (invoices[i].myAddress == psp.address && (invoices[i].type == type || !invoices[i].type)) {
+                    addresses.push(invoices[i].address);
+                    myInvoiceCount++;
+                    $("#invoicesBody").prepend("<tr><td><a class='openInvoice' invoiceNum='" + i + "'>" + htmlEncode(invoices[i].title) + "</a></td><td>" + htmlEncode(invoices[i].invoiceid) + "</td><td class='hidden-sm hidden-xs' id='inv_" + invoices[i].address + "'></td><td >" + htmlEncode(invoices[i].amount.toFixed(8)) + "</td><td style='text-align:right;'><a class='openInvoiceWallet' title='Open " + getTypeName(type) + " Wallet' invoiceNum='" + i + "'><span class='glyphicon glyphicon-folder-open'></span></a> <a class='sweepInvoice' title='Sweep Funds' invoiceNum='" + i + "'><span class='glyphicon glyphicon-log-in'></span></a> <a class='deleteInvoice' title='Delete' invoiceNum='" + i + "'><span class='glyphicon glyphicon-trash'></span></a></td></tr>");
                 }
             }
         }
 
         $("#invoiceCount").html(myInvoiceCount);
-        $(".invoiceType").html( getTypeName( type ) );
+        $(".invoiceType").html(getTypeName(type));
 
-        if ( myInvoiceCount < 1 )
-        {
+        if (myInvoiceCount < 1) {
             $("#invoiceTx, #invoiceCountLine").hide();
             $("#noInvoice").show();
         }
-        else
-        {
+        else {
             $("#noInvoice").hide();
             $("#invoiceTx, #invoiceCountLine").show();
             $.ajax(
-            {
-                type: "GET",
-                url: "https://blockchain.info/multiaddr?cors=true&active=" + addresses.join("|"),
-                async: true,
-                dataType: "json",
-                data:
-                {}
-            }).done(function (msg)
-            {
-                for ( i in msg.addresses)
                 {
-                    address = msg.addresses[i].address;
-                    balance = msg.addresses[i].final_balance;
-                    balance = (balance / 100000000);
-                    balance = balance.toFixed(8);
+                    type: "GET",
+                    url: "https://blockchain.info/multiaddr?cors=true&active=" + addresses.join("|"),
+                    async: true,
+                    dataType: "json",
+                    data:
+                        {}
+                }).done(function (msg) {
+                    for (i in msg.addresses) {
+                        address = msg.addresses[i].address;
+                        balance = msg.addresses[i].final_balance;
+                        balance = (balance / 100000000);
+                        balance = balance.toFixed(8);
 
-                    $("#inv_" + address).html( balance );
-                }
+                        $("#inv_" + address).html(balance);
+                    }
 
-                $("#invoicesBody td:nth-child(4):empty").html("0.00000000");
-            });
+                    $("#invoicesBody td:nth-child(4):empty").html("0.00000000");
+                });
         }
 
         $("#invoicesBody td:nth-child(5) a").tooltip(); //Tooltips
@@ -1643,18 +1573,18 @@ psp = window.psp = {
             "https://ethereum-sepolia-rpc.publicnode.com",
             "https://rpc.sepolia.org"
         ];
-        
+
         var self = this;
-        var tryNextRPC = function(index) {
+        var tryNextRPC = function (index) {
             if (index >= fallbackRPCs.length) {
                 console.error("All RPC endpoints failed");
                 $('#apiErrorBox').show();
                 return;
             }
-            
+
             var rpcUrl = fallbackRPCs[index];
             console.log("Trying fallback RPC:", rpcUrl);
-            
+
             $.ajax({
                 type: "POST",
                 url: rpcUrl,
@@ -1665,34 +1595,33 @@ psp = window.psp = {
                     params: [self.address, "latest"],
                     id: 1
                 }),
-                success: function(rpcMsg) {
+                success: function (rpcMsg) {
                     if (rpcMsg && rpcMsg.result) {
                         var balanceWei = parseInt(rpcMsg.result, 16);
                         self.balance = balanceWei / 1000000000000000000;
                         var spendable = self.balance - self.txFeePerKb;
                         if (spendable < 0) spendable = 0;
-                        
+
                         console.log("✅ Balance fetched from fallback RPC!");
                         console.log("Balance (ETH):", self.balance);
-                        
-                        $("#btcBalance").html( btcFormat( self.balance ) );
-                        $("#spendable").html("?" + btcFormat( spendable ) );
+
+                        $("#btcBalance").html(btcFormat(self.balance));
+                        $("#spendable").html("?" + btcFormat(spendable));
                         self.getFiatPrice();
-                        setTimeout( function () {self.getHistory()}, 1000);
+                        setTimeout(function () { self.getHistory() }, 1000);
                     } else {
                         tryNextRPC(index + 1);
                     }
                 },
-                error: function() {
+                error: function () {
                     tryNextRPC(index + 1);
                 }
             });
         };
-        
+
         tryNextRPC(0);
     },
-    "getHistory": function ()
-    {
+    "getHistory": function () {
         // Use Etherscan API to get Ethereum transaction history
         // Using public endpoint (no API key required for basic queries, but rate limited)
         // Sepolia testnet API for testing
@@ -1701,112 +1630,105 @@ psp = window.psp = {
 
         $("#txTable tbody").html("");
         $.ajax(
-        {
-            type: "GET",
-            url: url,
-            async: true,
-            dataType: "json",
-            error: function(xhr, status, error) {
-                console.error('Error fetching transaction history:', error);
-                $('#apiErrorBox').show();
-            },
-            data:
-            {}
-        }).done(function (msg)
-        {
-            if (msg && msg.status === "1" && msg.result && Array.isArray(msg.result) && msg.result.length > 0)
             {
-                var txCount = 0;
-                for ( i=0; i<msg.result.length && i<100; i++ ) // Check up to 100 transactions
-                {
-                    var tx = msg.result[i];
-                    if (!tx || !tx.hash) continue;
-                    
-                    // Check if transaction is incoming (to this address) or outgoing (from this address)
-                    var isIncoming = tx.to && tx.to.toLowerCase() === psp.address.toLowerCase();
-                    var isOutgoing = tx.from && tx.from.toLowerCase() === psp.address.toLowerCase();
-                    
-                    // Only show transactions where this address is involved
-                    if (!isIncoming && !isOutgoing) {
-                        continue;
+                type: "GET",
+                url: url,
+                async: true,
+                dataType: "json",
+                error: function (xhr, status, error) {
+                    console.error('Error fetching transaction history:', error);
+                    $('#apiErrorBox').show();
+                },
+                data:
+                    {}
+            }).done(function (msg) {
+                if (msg && msg.status === "1" && msg.result && Array.isArray(msg.result) && msg.result.length > 0) {
+                    var txCount = 0;
+                    for (i = 0; i < msg.result.length && i < 100; i++) // Check up to 100 transactions
+                    {
+                        var tx = msg.result[i];
+                        if (!tx || !tx.hash) continue;
+
+                        // Check if transaction is incoming (to this address) or outgoing (from this address)
+                        var isIncoming = tx.to && tx.to.toLowerCase() === psp.address.toLowerCase();
+                        var isOutgoing = tx.from && tx.from.toLowerCase() === psp.address.toLowerCase();
+
+                        // Only show transactions where this address is involved
+                        if (!isIncoming && !isOutgoing) {
+                            continue;
+                        }
+
+                        var amount = parseFloat(tx.value || 0) / 1000000000000000000; // Convert from Wei to ETH
+
+                        // Format time
+                        var txTime = moment.unix(parseInt(tx.timeStamp || 0)).format("MMM D YYYY [<span class='time'>]h:mma[</span>]");
+
+                        // Calculate confirmations
+                        var confirmations = tx.confirmations ? parseInt(tx.confirmations) : 0;
+
+                        // Transaction hash link to Etherscan (Sepolia testnet for testing)
+                        var explorerUrl = USE_TESTNET ? "https://sepolia.etherscan.io" : "https://etherscan.io";
+                        var txLink = explorerUrl + "/tx/" + tx.hash;
+                        var txHashShort = tx.hash.substring(0, 30) + '...';
+
+                        // Amount display (positive for incoming, negative for outgoing)
+                        var amountDisplay = isIncoming ? btcFormat(amount) : btcFormat(-amount);
+                        var amountColor = isIncoming ? "#F49500" : "#52B3EA";
+
+                        var row = '<tr>' +
+                            '<td><a href="' + txLink + '" target="_blank">' + txTime + '</a></td>' +
+                            '<td class="hidden-sm hidden-xs"><a href="' + txLink + '" target="_blank">' + txHashShort + '</a></td>' +
+                            '<td class="hidden-sm hidden-xs">' + formatMoney(confirmations) + '</td>' +
+                            '<td style="color:' + amountColor + '; text-align:right; padding-right:30px;"><a href="' + txLink + '" target="_blank">' + amountDisplay + '</a></td>' +
+                            '</tr>';
+
+                        $("#txTable tbody").append(row);
+                        txCount++;
+
+                        if (txCount >= 50) break; // Limit display to 50 transactions
                     }
-                    
-                    var amount = parseFloat(tx.value || 0) / 1000000000000000000; // Convert from Wei to ETH
-                    
-                    // Format time
-                    var txTime = moment.unix( parseInt(tx.timeStamp || 0) ).format( "MMM D YYYY [<span class='time'>]h:mma[</span>]" );
-                    
-                    // Calculate confirmations
-                    var confirmations = tx.confirmations ? parseInt(tx.confirmations) : 0;
-                    
-                    // Transaction hash link to Etherscan (Sepolia testnet for testing)
-                    var explorerUrl = USE_TESTNET ? "https://sepolia.etherscan.io" : "https://etherscan.io";
-                    var txLink = explorerUrl + "/tx/" + tx.hash;
-                    var txHashShort = tx.hash.substring(0,30) + '...';
-                    
-                    // Amount display (positive for incoming, negative for outgoing)
-                    var amountDisplay = isIncoming ? btcFormat(amount) : btcFormat(-amount);
-                    var amountColor = isIncoming ? "#F49500" : "#52B3EA";
-                    
-                    var row = '<tr>' +
-                        '<td><a href="' + txLink + '" target="_blank">' + txTime + '</a></td>' +
-                        '<td class="hidden-sm hidden-xs"><a href="' + txLink + '" target="_blank">' + txHashShort + '</a></td>' +
-                        '<td class="hidden-sm hidden-xs">' + formatMoney(confirmations) + '</td>' +
-                        '<td style="color:' + amountColor + '; text-align:right; padding-right:30px;"><a href="' + txLink + '" target="_blank">' + amountDisplay + '</a></td>' +
-                        '</tr>';
-                    
-                    $("#txTable tbody").append(row);
-                    txCount++;
-                    
-                    if (txCount >= 50) break; // Limit display to 50 transactions
+
+                    if (txCount > 0) {
+                        $("#txBox").show();
+                        $("#noTx, #txList .break").hide();
+                    } else {
+                        $("#txBox").hide();
+                        $("#noTx").show();
+                    }
                 }
-                
-                if (txCount > 0) {
-                    $("#txBox").show();
-                    $("#noTx, #txList .break").hide();
-                } else {
+                else {
                     $("#txBox").hide();
                     $("#noTx").show();
                 }
-            }
-            else
-            {
-                $("#txBox").hide();
-                $("#noTx").show();
-            }
-        });
-    },  
-
-    "setTxFeePerKb": function ( fee )
-    {
-        this.txFeePerKb = parseFloat( fee );
-        setCookie( "txFeePerKb", parseFloat(fee), 100 );
+            });
     },
 
-    "get24Chart": function() 
-    {
-        if ( this.chartLoaded )
-        {
+    "setTxFeePerKb": function (fee) {
+        this.txFeePerKb = parseFloat(fee);
+        setCookie("txFeePerKb", parseFloat(fee), 100);
+    },
+
+    "get24Chart": function () {
+        if (this.chartLoaded) {
             $("#chartBox").slideDown();
             return;
         }
 
         $.ajax({
-           type: "GET",
-           url: "https://api.bitcoinaverage.com/history/" + psp.currency + "/per_minute_24h_sliding_window.csv",
-           dataType: "text",
-           success: function(allText) 
-            {
+            type: "GET",
+            url: "https://api.bitcoinaverage.com/history/" + psp.currency + "/per_minute_24h_sliding_window.csv",
+            dataType: "text",
+            success: function (allText) {
                 psp.chartLoaded = true;
                 var allTextLines = allText.split(/\r\n|\n/);
                 var headers = allTextLines[0].split(',');
                 var lines = [];
 
-                for (var i=1; i<allTextLines.length; i++) {
+                for (var i = 1; i < allTextLines.length; i++) {
                     var data = allTextLines[i].split(',');
                     if (data.length == headers.length) {
                         var tarr = [];
-                        for (var j=0; j<headers.length; j++) {
+                        for (var j = 0; j < headers.length; j++) {
                             tarr.push(data[j]);
                         }
                         lines.push(tarr);
@@ -1814,44 +1736,41 @@ psp = window.psp = {
                 }
 
                 hours = [];
-                for ( i in lines )
-                {
-                    if ( i % 2 == 0 )
-                    {
-                        var date = new Date( lines[i][0] + " GMT");
-                        unix = date.getTime()  ;
-                        hours.push( [unix, lines[i][1] ] );
+                for (i in lines) {
+                    if (i % 2 == 0) {
+                        var date = new Date(lines[i][0] + " GMT");
+                        unix = date.getTime();
+                        hours.push([unix, lines[i][1]]);
                     }
                 }
 
                 $("#chartBox").slideDown();
 
-                $.plot("#chart24", [ hours ],
-                    {       
-                           xaxis: {mode:"time", timeformat: "%H", timezone: "browser", tickSize: [3, "hour"]},
-                           colors: ["#F49500"],
-                           grid: {
+                $.plot("#chart24", [hours],
+                    {
+                        xaxis: { mode: "time", timeformat: "%H", timezone: "browser", tickSize: [3, "hour"] },
+                        colors: ["#F49500"],
+                        grid: {
                             color: "#64657A",
-                            borderColor:"#3E3F4D",
-                            borderWidth:1
-                           }
-                   }
+                            borderColor: "#3E3F4D",
+                            borderWidth: 1
+                        }
+                    }
                 );
             }
         });
     },
 
-    "getBalance": function ()
-    {
+    "getBalance": function () {
         console.log("Fetching balance for address:", this.address);
         console.log("Network:", USE_TESTNET ? "Sepolia Testnet" : "Mainnet");
-        
+
         // For Sepolia, use direct RPC call since Etherscan API V1 is deprecated
         if (USE_TESTNET) {
             // Use direct RPC call for Sepolia
             var rpcUrl = "https://ethereum-sepolia-rpc.publicnode.com";
             console.log("Using RPC:", rpcUrl);
-            
+
             $.ajax({
                 type: "POST",
                 url: rpcUrl,
@@ -1862,29 +1781,29 @@ psp = window.psp = {
                     params: [this.address, "latest"],
                     id: 1
                 }),
-                success: function(rpcMsg) {
+                success: function (rpcMsg) {
                     if (rpcMsg && rpcMsg.result) {
                         var balanceWei = parseInt(rpcMsg.result, 16);
                         psp.balance = balanceWei / 1000000000000000000;
                         var spendable = psp.balance - psp.txFeePerKb;
                         if (spendable < 0) spendable = 0;
-                        
+
                         console.log("✅ Balance fetched successfully from RPC!");
                         console.log("Balance (Wei):", balanceWei);
                         console.log("Balance (ETH):", psp.balance);
                         console.log("Spendable (ETH):", spendable);
-                        
-                        $("#btcBalance").html( btcFormat( psp.balance ) );
-                        $("#spendable").html("?" + btcFormat( spendable ) );
+
+                        $("#btcBalance").html(btcFormat(psp.balance));
+                        $("#spendable").html("?" + btcFormat(spendable));
                         psp.getFiatPrice();
-                        setTimeout( function () {psp.getHistory()}, 1000);
+                        setTimeout(function () { psp.getHistory() }, 1000);
                     } else {
                         console.error("RPC error:", rpcMsg);
                         // Try fallback RPC
                         psp.getBalanceFallback();
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("RPC call failed:", error);
                     // Try fallback RPC
                     psp.getBalanceFallback();
@@ -1892,188 +1811,121 @@ psp = window.psp = {
             });
             return;
         }
-        
+
         // For Mainnet, use Etherscan API
         var url = "https://api.etherscan.io/api?module=account&action=balance&address=" + this.address + "&tag=latest";
         console.log("Using API: Mainnet Etherscan");
 
         $.ajax(
-        {
-            type: "GET",
-            url: url,
-            async: true,
-            dataType: "json",
-            error: function (xhr, status, error) {
-                console.error('Error fetching balance from Etherscan:', error);
-                console.log('Trying alternative API...');
-                
-                // Try Alchemy public RPC for Sepolia as fallback
-                if (USE_TESTNET) {
-                    var alchemyUrl = "https://eth-sepolia.g.alchemy.com/v2/demo";
-                    $.ajax({
-                        type: "POST",
-                        url: alchemyUrl,
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "eth_getBalance",
-                            params: [psp.address, "latest"],
-                            id: 1
-                        }),
-                        success: function(alchemyMsg) {
-                            if (alchemyMsg && alchemyMsg.result) {
-                                var balanceWei = parseInt(alchemyMsg.result, 16);
-                                psp.balance = balanceWei / 1000000000000000000;
-                                var spendable = psp.balance - psp.txFeePerKb;
-                                if (spendable < 0) spendable = 0;
-                                
-                                console.log("Balance fetched from Alchemy!");
-                                console.log("Balance (ETH):", psp.balance);
-                                
-                                $("#btcBalance").html( btcFormat( psp.balance ) );
-                                $("#spendable").html("?" + btcFormat( spendable ) );
-                                psp.getFiatPrice();
-                                setTimeout( function () {psp.getHistory()}, 1000);
-                                return;
+            {
+                type: "GET",
+                url: url,
+                async: true,
+                dataType: "json",
+                error: function (xhr, status, error) {
+                    console.error('Error fetching balance from Etherscan:', error);
+                    console.log('Trying alternative API...');
+
+                    // Try Alchemy public RPC for Sepolia as fallback
+                    if (USE_TESTNET) {
+                        var alchemyUrl = "https://eth-sepolia.g.alchemy.com/v2/demo";
+                        $.ajax({
+                            type: "POST",
+                            url: alchemyUrl,
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                jsonrpc: "2.0",
+                                method: "eth_getBalance",
+                                params: [psp.address, "latest"],
+                                id: 1
+                            }),
+                            success: function (alchemyMsg) {
+                                if (alchemyMsg && alchemyMsg.result) {
+                                    var balanceWei = parseInt(alchemyMsg.result, 16);
+                                    psp.balance = balanceWei / 1000000000000000000;
+                                    var spendable = psp.balance - psp.txFeePerKb;
+                                    if (spendable < 0) spendable = 0;
+
+                                    console.log("Balance fetched from Alchemy!");
+                                    console.log("Balance (ETH):", psp.balance);
+
+                                    $("#btcBalance").html(btcFormat(psp.balance));
+                                    $("#spendable").html("?" + btcFormat(spendable));
+                                    psp.getFiatPrice();
+                                    setTimeout(function () { psp.getHistory() }, 1000);
+                                    return;
+                                }
+                            },
+                            error: function () {
+                                console.error('Alchemy API also failed');
                             }
+                        });
+                    }
+
+                    // Try alternative API if Etherscan fails
+                    var altUrl = "https://api.ethplorer.io/getAddressInfo/" + psp.address + "?apiKey=freekey";
+                    $.ajax({
+                        type: "GET",
+                        url: altUrl,
+                        async: true,
+                        dataType: "json",
+                        error: function () {
+                            $('#apiErrorBox').show();
                         },
-                        error: function() {
-                            console.error('Alchemy API also failed');
+                        success: function (altMsg) {
+                            if (altMsg && altMsg.ETH) {
+                                psp.balance = parseFloat(altMsg.ETH.balance) || 0;
+                                var spendable = psp.balance - psp.txFeePerKb;
+                                if (spendable < 0)
+                                    spendable = 0;
+
+                                $("#btcBalance").html(btcFormat(psp.balance));
+                                $("#spendable").html("?" + btcFormat(spendable));
+                                psp.getFiatPrice();
+                                setTimeout(function () { psp.getHistory() }, 1000);
+                            } else {
+                                $('#apiErrorBox').show();
+                            }
                         }
                     });
-                }
-                
-                // Try alternative API if Etherscan fails
-                var altUrl = "https://api.ethplorer.io/getAddressInfo/" + psp.address + "?apiKey=freekey";
-                $.ajax({
-                    type: "GET",
-                    url: altUrl,
-                    async: true,
-                    dataType: "json",
-                    error: function() {
-                        $('#apiErrorBox').show();
-                    },
-                    success: function(altMsg) {
-                        if (altMsg && altMsg.ETH) {
-                            psp.balance = parseFloat(altMsg.ETH.balance) || 0;
-                            var spendable = psp.balance - psp.txFeePerKb;
-                            if (spendable < 0)
-                                spendable = 0;
+                },
+                data:
+                    {}
+            }).done(function (msg) {
+                console.log("Etherscan API Response:", msg);
 
-                            $("#btcBalance").html( btcFormat( psp.balance ) );
-                            $("#spendable").html("?" + btcFormat( spendable ) );
-                            psp.getFiatPrice();
-                            setTimeout( function () {psp.getHistory()}, 1000);
-                        } else {
-                            $('#apiErrorBox').show();
-                        }
+                // Handle response - check if result exists and is a valid number
+                if (msg && msg.result) {
+                    var balanceWei = msg.result;
+
+                    // Check if result is a valid number string (Wei amount)
+                    // Even if status is "0" with deprecated warning, result might still contain balance
+                    if (typeof balanceWei === 'string' && /^[0-9]+$/.test(balanceWei)) {
+                        psp.balance = parseFloat(balanceWei) / 1000000000000000000; // Convert from Wei to ETH
+                        var spendable = psp.balance - psp.txFeePerKb;
+                        if (spendable < 0)
+                            spendable = 0;
+
+                        console.log("✅ Balance fetched successfully!");
+                        console.log("Balance (Wei):", balanceWei);
+                        console.log("Balance (ETH):", psp.balance);
+                        console.log("Spendable (ETH):", spendable);
+
+                        $("#btcBalance").html(btcFormat(psp.balance));
+                        $("#spendable").html("?" + btcFormat(spendable));
+                        psp.getFiatPrice();
+                        setTimeout(function () { psp.getHistory() }, 1000);
+                        return;
+                    } else {
+                        console.warn("Invalid balance result:", balanceWei);
                     }
-                });
-            },
-            data:
-            {}
-        }).done(function (msg)
-        {
-            console.log("Etherscan API Response:", msg);
-            
-            // Handle response - check if result exists and is a valid number
-            if (msg && msg.result) {
-                var balanceWei = msg.result;
-                
-                // Check if result is a valid number string (Wei amount)
-                // Even if status is "0" with deprecated warning, result might still contain balance
-                if (typeof balanceWei === 'string' && /^[0-9]+$/.test(balanceWei)) {
-                    psp.balance = parseFloat(balanceWei) / 1000000000000000000; // Convert from Wei to ETH
-                    var spendable = psp.balance - psp.txFeePerKb;
-                    if (spendable < 0)
-                        spendable = 0;
-
-                    console.log("✅ Balance fetched successfully!");
-                    console.log("Balance (Wei):", balanceWei);
-                    console.log("Balance (ETH):", psp.balance);
-                    console.log("Spendable (ETH):", spendable);
-
-                    $("#btcBalance").html( btcFormat( psp.balance ) );
-                    $("#spendable").html("?" + btcFormat( spendable ) );
-                    psp.getFiatPrice();
-                    setTimeout( function () {psp.getHistory()}, 1000);
-                    return;
-                } else {
-                    console.warn("Invalid balance result:", balanceWei);
                 }
-            }
-            
-            // If we get here, API call failed or returned error
-            if (msg && msg.message) {
-                console.error('Etherscan API error message:', msg.message);
-                // Etherscan returned an error message
-                console.error('Etherscan API error:', msg.message);
-                // Try alternative API
-                var altUrl = "https://api.ethplorer.io/getAddressInfo/" + psp.address + "?apiKey=freekey";
-                $.ajax({
-                    type: "GET",
-                    url: altUrl,
-                    async: true,
-                    dataType: "json",
-                    error: function() {
-                        $('#apiErrorBox').show();
-                    },
-                    success: function(altMsg) {
-                        if (altMsg && altMsg.ETH) {
-                            psp.balance = parseFloat(altMsg.ETH.balance) || 0;
-                            var spendable = psp.balance - psp.txFeePerKb;
-                            if (spendable < 0)
-                                spendable = 0;
 
-                            $("#btcBalance").html( btcFormat( psp.balance ) );
-                            $("#spendable").html("?" + btcFormat( spendable ) );
-                            psp.getFiatPrice();
-                            setTimeout( function () {psp.getHistory()}, 1000);
-                        } else {
-                            $('#apiErrorBox').show();
-                        }
-                    }
-                });
-            } else {
-                // Unknown error, try direct RPC call for Sepolia
-                console.log("Etherscan API failed, trying direct RPC call...");
-                
-                if (USE_TESTNET && typeof SEPOLIA_RPC_ALTERNATIVES !== 'undefined' && SEPOLIA_RPC_ALTERNATIVES.length > 0) {
-                    // Try first RPC endpoint
-                    var rpcUrl = SEPOLIA_RPC_ALTERNATIVES[0];
-                    $.ajax({
-                        type: "POST",
-                        url: rpcUrl,
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            jsonrpc: "2.0",
-                            method: "eth_getBalance",
-                            params: [psp.address, "latest"],
-                            id: 1
-                        }),
-                        success: function(rpcMsg) {
-                            if (rpcMsg && rpcMsg.result) {
-                                var balanceWei = parseInt(rpcMsg.result, 16);
-                                psp.balance = balanceWei / 1000000000000000000;
-                                var spendable = psp.balance - psp.txFeePerKb;
-                                if (spendable < 0) spendable = 0;
-                                
-                                console.log("Balance fetched from RPC!");
-                                console.log("Balance (ETH):", psp.balance);
-                                
-                                $("#btcBalance").html( btcFormat( psp.balance ) );
-                                $("#spendable").html("?" + btcFormat( spendable ) );
-                                psp.getFiatPrice();
-                                setTimeout( function () {psp.getHistory()}, 1000);
-                                return;
-                            }
-                        },
-                        error: function() {
-                            console.error('RPC call failed');
-                            $('#apiErrorBox').show();
-                        }
-                    });
-                } else {
+                // If we get here, API call failed or returned error
+                if (msg && msg.message) {
+                    console.error('Etherscan API error message:', msg.message);
+                    // Etherscan returned an error message
+                    console.error('Etherscan API error:', msg.message);
                     // Try alternative API
                     var altUrl = "https://api.ethplorer.io/getAddressInfo/" + psp.address + "?apiKey=freekey";
                     $.ajax({
@@ -2081,34 +1933,98 @@ psp = window.psp = {
                         url: altUrl,
                         async: true,
                         dataType: "json",
-                        error: function() {
+                        error: function () {
                             $('#apiErrorBox').show();
                         },
-                        success: function(altMsg) {
+                        success: function (altMsg) {
                             if (altMsg && altMsg.ETH) {
                                 psp.balance = parseFloat(altMsg.ETH.balance) || 0;
                                 var spendable = psp.balance - psp.txFeePerKb;
                                 if (spendable < 0)
                                     spendable = 0;
 
-                                $("#btcBalance").html( btcFormat( psp.balance ) );
-                                $("#spendable").html("?" + btcFormat( spendable ) );
+                                $("#btcBalance").html(btcFormat(psp.balance));
+                                $("#spendable").html("?" + btcFormat(spendable));
                                 psp.getFiatPrice();
-                                setTimeout( function () {psp.getHistory()}, 1000);
+                                setTimeout(function () { psp.getHistory() }, 1000);
                             } else {
                                 $('#apiErrorBox').show();
                             }
                         }
                     });
+                } else {
+                    // Unknown error, try direct RPC call for Sepolia
+                    console.log("Etherscan API failed, trying direct RPC call...");
+
+                    if (USE_TESTNET && typeof SEPOLIA_RPC_ALTERNATIVES !== 'undefined' && SEPOLIA_RPC_ALTERNATIVES.length > 0) {
+                        // Try first RPC endpoint
+                        var rpcUrl = SEPOLIA_RPC_ALTERNATIVES[0];
+                        $.ajax({
+                            type: "POST",
+                            url: rpcUrl,
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                jsonrpc: "2.0",
+                                method: "eth_getBalance",
+                                params: [psp.address, "latest"],
+                                id: 1
+                            }),
+                            success: function (rpcMsg) {
+                                if (rpcMsg && rpcMsg.result) {
+                                    var balanceWei = parseInt(rpcMsg.result, 16);
+                                    psp.balance = balanceWei / 1000000000000000000;
+                                    var spendable = psp.balance - psp.txFeePerKb;
+                                    if (spendable < 0) spendable = 0;
+
+                                    console.log("Balance fetched from RPC!");
+                                    console.log("Balance (ETH):", psp.balance);
+
+                                    $("#btcBalance").html(btcFormat(psp.balance));
+                                    $("#spendable").html("?" + btcFormat(spendable));
+                                    psp.getFiatPrice();
+                                    setTimeout(function () { psp.getHistory() }, 1000);
+                                    return;
+                                }
+                            },
+                            error: function () {
+                                console.error('RPC call failed');
+                                $('#apiErrorBox').show();
+                            }
+                        });
+                    } else {
+                        // Try alternative API
+                        var altUrl = "https://api.ethplorer.io/getAddressInfo/" + psp.address + "?apiKey=freekey";
+                        $.ajax({
+                            type: "GET",
+                            url: altUrl,
+                            async: true,
+                            dataType: "json",
+                            error: function () {
+                                $('#apiErrorBox').show();
+                            },
+                            success: function (altMsg) {
+                                if (altMsg && altMsg.ETH) {
+                                    psp.balance = parseFloat(altMsg.ETH.balance) || 0;
+                                    var spendable = psp.balance - psp.txFeePerKb;
+                                    if (spendable < 0)
+                                        spendable = 0;
+
+                                    $("#btcBalance").html(btcFormat(psp.balance));
+                                    $("#spendable").html("?" + btcFormat(spendable));
+                                    psp.getFiatPrice();
+                                    setTimeout(function () { psp.getHistory() }, 1000);
+                                } else {
+                                    $('#apiErrorBox').show();
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
     },
 
-     "getFiatPrefix": function()
-    {
-        switch ( this.currency )
-        {
+    "getFiatPrefix": function () {
+        switch (this.currency) {
             case "AUD":
             case "USD":
             case "CAD":
@@ -2119,27 +2035,27 @@ psp = window.psp = {
                 return "$";
                 break;
             case "BRL":
-                return "R$"; 
+                return "R$";
             case "CNY":
-                return "¥";            
+                return "¥";
             case "DKK":
                 return "kr";
             case "EUR":
-                return "€";            
+                return "€";
             case "GBP":
-                return "£";            
+                return "£";
             case "INR":
                 return "";
             case "ISK":
-                return "kr";            
+                return "kr";
             case "JPY":
                 return "¥";
             case "KRW":
-                return "₩";            
+                return "₩";
             case "PLN":
                 return "zł";
             case "RUB":
-                return "руб ";            
+                return "руб ";
             case "SEK":
                 return "kr ";
             case "TWD":
@@ -2151,15 +2067,13 @@ psp = window.psp = {
         }
     },
 
-    "getFiatValue": function ()
-    {
+    "getFiatValue": function () {
         this.fiatValue = this.price * psp.balance;
-        $("#fiatValue").html( this.getFiatPrefix() + formatMoney(  this.fiatValue.toFixed(2) ) );
-        $("#currentPrice").html( this.getFiatPrefix() + formatMoney(  psp.price.toFixed(2)  ));
+        $("#fiatValue").html(this.getFiatPrefix() + formatMoney(this.fiatValue.toFixed(2)));
+        $("#currentPrice").html(this.getFiatPrefix() + formatMoney(psp.price.toFixed(2)));
     },
 
-    "getFiatPrice": function ()
-    {
+    "getFiatPrice": function () {
         currency = this.currency;
 
         // Use CoinGecko API to get ETH price in USD
@@ -2176,11 +2090,11 @@ psp = window.psp = {
                 price = price.toFixed(2);
                 // Removed line that was overwriting ETH price in header - ETH price is now handled by fetchETHPrice() in index.html
                 // $("#price").html(psp.getFiatPrefix()+formatMoney(price) ).show();
-                $("#currencyValue").html( psp.currency );
-                $(".currency").animate({opacity:1});
+                $("#currencyValue").html(psp.currency);
+                $(".currency").animate({ opacity: 1 });
                 psp.getFiatValue();
             }
-        }).fail(function() {
+        }).fail(function () {
             // Fallback to old API if CoinGecko fails
             $.ajax({
                 type: "GET",
@@ -2193,32 +2107,28 @@ psp = window.psp = {
                     price = msg[currency].last;
                     psp.price = price;
                     price = price.toFixed(2);
-                    $("#currencyValue").html( psp.currency );
-                    $(".currency").animate({opacity:1});
+                    $("#currencyValue").html(psp.currency);
+                    $(".currency").animate({ opacity: 1 });
                     psp.getFiatValue();
                 }
             });
         });
     },
 
-    "amountFiatValue": function ()
-    {
+    "amountFiatValue": function () {
         var amount = $("#txtAmount").val();
         amount = parseFloat(amount);
-        if (!amount)
-        {
+        if (!amount) {
             amount = 0;
         }
 
-        if ( psp.useFiat )
-        {
+        if (psp.useFiat) {
             // User entered USD amount, show ETH equivalent
             var ethValue = amount / this.price;
-            ethValue = btcFormat( ethValue );
+            ethValue = btcFormat(ethValue);
             $("#fiatPrice").html("(ETH " + ethValue + ")");
         }
-        else
-        {
+        else {
             // User entered ETH amount, show USD equivalent
             var fiatValue = this.price * amount;
             fiatValue = fiatValue.toFixed(2);
@@ -2226,24 +2136,20 @@ psp = window.psp = {
         }
     },
 
-    "amountFiatValue2": function ()
-    {
+    "amountFiatValue2": function () {
         var amount = $("#txtReceiveAmount").val();
         amount = parseFloat(amount);
-        if (!amount)
-        {
+        if (!amount) {
             amount = 0;
         }
 
-        if ( psp.useFiat2 )
-        {
+        if (psp.useFiat2) {
             // User entered USD amount, show ETH equivalent
             var ethValue = amount / this.price;
-            ethValue = btcFormat( ethValue );
+            ethValue = btcFormat(ethValue);
             $("#fiatPrice2").html("(ETH " + ethValue + ")");
         }
-        else
-        {
+        else {
             // User entered ETH amount, show USD equivalent
             var fiatValue = this.price * amount;
             fiatValue = fiatValue.toFixed(2);
@@ -2251,13 +2157,11 @@ psp = window.psp = {
         }
     },
 
-    "prepareReset": function ()
-    {
+    "prepareReset": function () {
         setMsg("Are you sure you want to generate a new address? <strong>This will delete your current one and all funds associated with it.</strong> <br/><button id='confirmReset'>Yes</button> <button id='noReset'>No</button>");
     },
 
-    "reset": function ()
-    {
+    "reset": function () {
         $("#errorBox").hide();
 
         // chrome.storage.local.set(
@@ -2277,8 +2181,7 @@ psp = window.psp = {
         entroMouse.start();
     },
 
-    "txComplete": function ()
-    {   
+    "txComplete": function () {
 
 
 
@@ -2288,8 +2191,7 @@ psp = window.psp = {
 
         this.txSec = "";
 
-        if ( psp.sweeping != "" )
-        {
+        if (psp.sweeping != "") {
             alert("Payment Sent!")
             psp.address = psp.sweeping;
             this.sweeping = "";
@@ -2297,7 +2199,7 @@ psp = window.psp = {
         }
 
         $("#password").val("");
-        $("#txtAmount").val("").css({"font-size":"14px"});
+        $("#txtAmount").val("").css({ "font-size": "14px" });
         $("#txtAddress").val("");
         $("#fiatPrice").show();
         $("#oneNameInfo").hide();
@@ -2307,15 +2209,14 @@ psp = window.psp = {
 
         psp.getBalanceBlock = true;
 
-        setTimeout( function ()
-        {
+        setTimeout(function () {
             psp.getBalanceBlock = false;
         }, 1000);
 
         if (this.afterSendSuccessful) this.afterSendSuccessful();
 
 
-        if(r_gc){
+        if (r_gc) {
 
             $('#confirmSend').hide();
             $('.closeConfirm').hide();
@@ -2323,16 +2224,12 @@ psp = window.psp = {
 
     },
 
-    "exportWallet": function ()
-    {
-        if (!this.encrypted)
-        {
+    "exportWallet": function () {
+        if (!this.encrypted) {
             setMsg("" + psp.passcode);
         }
-        else
-        {
-            if ($("#password").val() == "")
-            {
+        else {
+            if ($("#password").val() == "") {
                 setMsg("Please enter password to decrypt wallet.");
                 return;
             }
@@ -2340,8 +2237,7 @@ psp = window.psp = {
             var passcode = CryptoJS.AES.decrypt(this.passcode, $("#password").val());
             var passcode = passcode.toString(CryptoJS.enc.Utf8);
 
-            if (!passcode)
-            {
+            if (!passcode) {
                 setMsg("Incorrenct Password!");
                 return;
             }
@@ -2351,15 +2247,12 @@ psp = window.psp = {
         }
     },
 
-    "importWallet": function ()
-    {
+    "importWallet": function () {
         setMsg("Importing a brain wallet will replace your current wallet. You will lose your balance if you haven't backed it up!<br/><input type='text' id='importBrainTxt' placeholder='Brainwallet'> <button id='confirmImport'>Import</button>");
     },
 
-    "confirmImport": function ()
-    {
-        if (!$("#confirmImport").attr("confirmed"))
-        {
+    "confirmImport": function () {
+        if (!$("#confirmImport").attr("confirmed")) {
             $("#confirmImport").html("Are you sure? Click to confirm!").attr("confirmed", "true");
             $("<button id='clearBox'>No</button>").insertAfter("#confirmImport");
             return;
@@ -2372,24 +2265,24 @@ psp = window.psp = {
             }
 
             psp.passcode = $("#importBrainTxt").val();
-            
+
             if (!psp.passcode || psp.passcode.trim() === '') {
                 throw new Error('Please enter a brain wallet passcode');
             }
-            
+
             // Generate Ethereum wallet from brain wallet passcode
             var entropyHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(psp.passcode));
-            
+
             // Create private key from hash (32 bytes)
             var privateKey = ethers.utils.hexlify(ethers.utils.arrayify(entropyHash).slice(0, 32));
-            
+
             // Create Ethereum wallet from private key
             var ethWallet = new ethers.Wallet(privateKey);
-            
+
             if (!ethWallet || !ethWallet.address) {
                 throw new Error('Failed to generate wallet address');
             }
-            
+
             var address = ethWallet.address;
 
             psp.address = address;
@@ -2407,12 +2300,11 @@ psp = window.psp = {
         this.txSec = "";
 
         chrome.storage.local.set(
-        {
-            'code': psp.passcode,
-            'encrypted': false,
-            'address': address
-        }, function ()
-        {
+            {
+                'code': psp.passcode,
+                'encrypted': false,
+                'address': address
+            }, function () {
             psp.open();
         });
 
@@ -2420,21 +2312,18 @@ psp = window.psp = {
     }
 };
 
-function popup(txt)
-{
+function popup(txt) {
     setGPGMsg('<textarea id="gpgBox" readonly></textarea>');
     $("#gpgBox").val(txt);
 }
 
-function popupMsg(txt)
-{
+function popupMsg(txt) {
     // txt = txt.replace(/\n/g, '<br />');
 
     setGPGMsg('<div id="messageBox">' + txt + '</div>');
 }
 
-$(document).ready(function ()
-{
+$(document).ready(function () {
     var code = window.location.hash;
 });
 
@@ -2444,8 +2333,8 @@ Date.prototype.format = function (format) //author: meizz
         "M+": this.getMonth() + 1, //month
         "d+": this.getDate(), //day
         "H+": this.getHours(), //hour
-        "h+": ((this.getHours() % 12)==0)?"12":(this.getHours() % 12), //hour
-        "z+": ( this.getHours()>11 )?"pm":"am", //hour
+        "h+": ((this.getHours() % 12) == 0) ? "12" : (this.getHours() % 12), //hour
+        "z+": (this.getHours() > 11) ? "pm" : "am", //hour
         "m+": this.getMinutes(), //minute
         "s+": this.getSeconds(), //second
         "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
@@ -2457,40 +2346,35 @@ Date.prototype.format = function (format) //author: meizz
         if (new RegExp("(" + k + ")").test(format))
             format = format.replace(RegExp.$1,
                 RegExp.$1.length == 1 ? o[k] :
-                ("00" + o[k]).substr(("" + o[k]).length));
+                    ("00" + o[k]).substr(("" + o[k]).length));
     return format;
 }
 
-function formatMoney(x)
-{
+function formatMoney(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
 
-function htmlEncode(value)
-{
+function htmlEncode(value) {
     //create a in-memory div, set it's inner text(which jQuery automatically encodes)
     //then grab the encoded contents back out.  The div never exists on the page.
 
     return $('<div/>').text(value).html();
 }
 
-function s2hex(s)
-{
+function s2hex(s) {
     return Bitcoin.convert.bytesToHex(Bitcoin.convert.stringToBytes(s))
 }
 
-function playBeep()
-{
+function playBeep() {
     var snd = document.getElementById('noise');
     snd.src = 'balance.wav';
     snd.load();
     snd.play();
 }
 
-function playBaron()
-{
+function playBaron() {
     var snd = document.getElementById('noise');
     psp.snd = snd;
     snd.src = 'baron.mp3';
@@ -2498,8 +2382,7 @@ function playBaron()
     snd.play();
 }
 
-function playTurn()
-{
+function playTurn() {
     var snd = document.getElementById('noise');
     psp.snd = snd;
     snd.src = 'turn.mp3';
@@ -2507,11 +2390,11 @@ function playTurn()
     snd.play();
 }
 
-String.prototype.startsWith = function(text) {
+String.prototype.startsWith = function (text) {
     return (this.length >= text.length && this.substring(0, text.length) === text);
 }
 
-function ajax(url,success,data) {
+function ajax(url, success, data) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {
@@ -2521,8 +2404,7 @@ function ajax(url,success,data) {
             } else {
                 // Blockchain.info weirdness... This isn't actually a server error, but a 'no results'
 
-                if ( psp.sweeping != "" )
-                {
+                if (psp.sweeping != "") {
                     alert("Blockchain error...")
                     this.sweeping = "";
                     $('#settingsModal').modal('hide')
@@ -2549,26 +2431,22 @@ function ajax(url,success,data) {
 
 }
 
-function tx_fetch(url, onSuccess, onError, postdata)
-{
+function tx_fetch(url, onSuccess, onError, postdata) {
     $.ajax(
-    {
-        url: url,
-        data: postdata || '',
-        type: "POST",
-        success: function (res)
         {
-            onSuccess(JSON.stringify(res));
-        },
-        error: function (xhr, opt, err)
-        {
-            // console.log("error!");
-        }
-    });
+            url: url,
+            data: postdata || '',
+            type: "POST",
+            success: function (res) {
+                onSuccess(JSON.stringify(res));
+            },
+            error: function (xhr, opt, err) {
+                // console.log("error!");
+            }
+        });
 }
 
-function setMsg( msg, green, dontHide )
-{
+function setMsg(msg, green, dontHide) {
     $("#errorBox").slideDown();
     $("#errorBox").html(msg);
 
@@ -2590,7 +2468,7 @@ function setMsg( msg, green, dontHide )
 
 function generateQRCode(str) {
 
-    document.getElementById("qrcode").innerHTML ="";
+    document.getElementById("qrcode").innerHTML = "";
 
 
     // Create a new instance of QRCode
@@ -2602,11 +2480,11 @@ function generateQRCode(str) {
 
         height: 300,
 
-        colorDark : "#000000",
+        colorDark: "#000000",
 
-        colorLight : "#ffffff",
+        colorLight: "#ffffff",
 
-        correctLevel : QRCode.CorrectLevel.H
+        correctLevel: QRCode.CorrectLevel.H
     });
 
     // Get the canvas element where the QR code is rendered
